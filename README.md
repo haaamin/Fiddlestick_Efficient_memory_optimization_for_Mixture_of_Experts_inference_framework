@@ -1,4 +1,4 @@
-# EDDIS-PP: Supporting Heterogeneous Pipeline Parallelism for Distributed Deep Learning Training
+# Fiddlestick: Efficient memory optimization for Mixture of Experts inference framework
 
 Data repository for this paper.
 
