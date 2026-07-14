@@ -1,0 +1,15 @@
+input_token: 16, output_token: 2, prefill_time: 9.053698825836182, decode_time: 2.942373251914978, hit_rate: 0.03871783088235294,0.167token/s
+input_token: 16, output_token: 4, prefill_time: 8.313434076309203, decode_time: 10.042623662948609, hit_rate: 0.03840460526315789,0.218token/s
+input_token: 16, output_token: 8, prefill_time: 8.503850960731507, decode_time: 22.602587509155274, hit_rate: 0.03855298913043478,0.257token/s
+input_token: 16, output_token: 16, prefill_time: 11.788281345367432, decode_time: 48.294781470298766, hit_rate: 0.03840725806451613,0.266token/s
+input_token: 32, output_token: 2, prefill_time: 9.400995254516602, decode_time: 3.3524314880371096, hit_rate: 0.034730113636363635,0.157token/s
+input_token: 32, output_token: 4, prefill_time: 9.245754957199097, decode_time: 9.938396167755126, hit_rate: 0.03458705357142857,0.209token/s
+input_token: 32, output_token: 8, prefill_time: 9.562827086448669, decode_time: 22.482294893264772, hit_rate: 0.034575320512820515,0.250token/s
+input_token: 32, output_token: 16, prefill_time: 10.414152479171753, decode_time: 44.146131896972655, hit_rate: 0.03441655585106383,0.293token/s
+input_token: 64, output_token: 2, prefill_time: 9.873536133766175, decode_time: 3.049817705154419, hit_rate: 0.035889423076923076,0.155token/s
+input_token: 64, output_token: 4, prefill_time: 9.893175625801087, decode_time: 9.908048868179321, hit_rate: 0.03587336753731344,0.202token/s
+input_token: 64, output_token: 8, prefill_time: 9.867967820167541, decode_time: 22.845759916305543, hit_rate: 0.035904489436619724,0.245token/s
+input_token: 64, output_token: 16, prefill_time: 10.413336586952209, decode_time: 41.75911121368408, hit_rate: 0.036189675632911394,0.307token/s
+input_token: 128, output_token: 16, prefill_time: 10.8278489112854, decode_time: 43.86134941577912, hit_rate: 0.03543214597902098,0.293token/s
+input_token: 128, output_token: 32, prefill_time: 10.2600727558136, decode_time: 90.80075404644012, hit_rate: 0.03526434748427673,0.317token/s
+input_token: 128, output_token: 64, prefill_time: 10.182397747039795, decode_time: 183.81607475280762, hit_rate: 0.03590273232984293,0.330token/s
