@@ -4,22 +4,15 @@
 # is built on this copy, so its throughput is the baseline against which DAOP's
 # own contribution should be read. Produces data/daop/daop_orig_fdrepo.
 set -u
-D=$DAOP; FS=$FS
-log(){ echo "[$(TZ=Asia/Seoul date '+%F %H:%M:%S')] $*"; }
+. "$(dirname "$0")/env.sh"
 export HF_HOME=$HF_HOME CUDA_VISIBLE_DEVICES=0
-export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 TOKENIZERS_PARALLELISM=false
-export OMP_NUM_THREADS=32 MKL_NUM_THREADS=32
-NUMA="numactl --physcpubind=32-63 --membind=1"
-MK=$SCRATCH/dorig3; mkdir -p $MK
-O=$WORK/daop_orig_fdrepo; mkdir -p $O
-pg(){ $FS/venv/bin/python -c "print(f'{16*1024/81079*0.95:.4f}')"; }
-ck(){ $FS/venv/bin/python -c "
-import json; d=json.load(open('$FS/calib/$1.json'))
-print(d['cpu_ms_effective'], d['h2d_pageable_ms'])"; }
+MK=$MARK; mkdir -p $MK
+O=$OUT/daop/daop_orig_fdrepo; mkdir -p $O
+pg(){ "$PY" -c "print(f'{16*1024/81079*0.95:.4f}')"; }
 X=mistralai/Mixtral-8x7B-v0.1; C=mistralai/Mixtral-8x22B-v0.1
 
-for i in $(seq 1 960); do [ -f $SCRATCH/dorig2.done ] && break; sleep 30; done
-[ -f $SCRATCH/dorig2.done ] || { log "ABORT: the hit-rate run has not finished"; exit 1; }
+for i in $(seq 1 960); do [ -f $MARK.done ] && break; sleep 30; done
+[ -f $MARK.done ] || { log "ABORT: the hit-rate run has not finished"; exit 1; }
 n=$(grep -c "for config in range(1 << self.n_expert)" $D/model/modeling_fiddler.py)
 [ "$n" = "2" ] || { log "ABORT: modeling_fiddler has $n brute-force blocks, expected 2"; exit 1; }
 log "measuring the Fiddler bundled with DAOP"
@@ -30,7 +23,7 @@ run(){ local lab=$1 model=$2 cal=$3
   read LC LG < <(ck $cal)
   log ">>> $lab"
   FS_LATENCY_CPU=$LC FS_LATENCY_GPU=$LG DAOP_INPUTS=16,32,64 DAOP_OUTPUTS=2,4,8,16 \
-  $NUMA timeout 28800 ./venv/bin/python fiddler/fiddler_infer.py \
+  $NUMA timeout 28800 "$PY" fiddler/fiddler_infer.py \
     --model "$model" --dataset_name sharegpt --cpu_offload 1 \
     --proportion_gpu $(pg) --num_samples 10 > $O/$lab.log 2>&1 && touch $MK/$lab.done
   log "<<< $lab exit=$?"
@@ -38,4 +31,4 @@ run(){ local lab=$1 model=$2 cal=$3
 run x7b "$X" d34_32
 run c22 "$C" d34_22b_32
 log "########## daop_orig3 DONE ##########"
-touch $SCRATCH/dorig3.done
+touch $MARK.done

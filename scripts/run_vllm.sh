@@ -4,15 +4,9 @@
 # fixed would let the added budget be absorbed by the key-value cache instead,
 # which understates what vLLM can do. Produces data/vllm/budget.
 set -u
-V=$VLLM_ENV
-B=$WORK/vllm_bench.py
-O=$WORK/vllm_budget2; mkdir -p $O
-MK=$SCRATCH/vfair; mkdir -p $MK
-log(){ echo "[$(TZ=Asia/Seoul date '+%F %H:%M:%S')] $*"; }
+. "$(dirname "$0")/env.sh"
 export HF_HOME=$HF_HOME CUDA_VISIBLE_DEVICES=0
-export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 TOKENIZERS_PARALLELISM=false
-NUMA="numactl --physcpubind=32-63 --membind=1"
-for i in $(seq 1 8640); do [ -f $SCRATCH/budall.done ] && break; sleep 10; done
+for i in $(seq 1 8640); do [ -f $MARK.done ] && break; sleep 10; done
 log "waiting for the preceding sweep"
 cd /tmp
 
@@ -43,7 +37,6 @@ sweep(){ local tag=$1 model=$2 size=$3; shift 3
   done
 }
 sweep x7b mistralai/Mixtral-8x7B-v0.1  87  8 16 24 32 40
-sweep phi $SCRATCH/phimoe   78  8 16 24 32 40
 sweep c22 mistralai/Mixtral-8x22B-v0.1 262 8 16 24 32 40
 log "########## vllm_fair DONE ##########"
-touch $SCRATCH/vfair.done
+touch $MARK.done
