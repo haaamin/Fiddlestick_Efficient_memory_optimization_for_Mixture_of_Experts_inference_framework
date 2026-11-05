@@ -48,6 +48,20 @@ writes are byte-identical to the ones in the paper.
 Every run in one figure comes from a single measurement session, so no curve
 mixes batches taken on different days.
 
+## What happens at an 8 GB budget on Mixtral-8x22B
+
+The three systems behave differently and the logs record each outcome.
+Fiddler enforces the budget and `data/ours/v3_c22_8GB/fiddler.log` ends in a
+`torch.cuda.OutOfMemoryError`. DAOP does not enforce it: `data/daop/daop_orig/`
+`c22_8GB.log` shows it starting with no expert cached, `HIT_RATE 0.0000
+(0/17920)`, while occupying 13221 MiB, 1.6 times the budget it was given.
+Fiddlestick stays inside the budget at 6912 MiB with 9 experts cached.
+
+That DAOP log stops after 10 of the 12 cells because the run hit its time
+limit. It is kept for the occupancy and cache-size evidence, which the first
+cells already establish; its throughput is not used in any figure, and the 8 GB
+point is absent from Fig 6 for both Fiddler and DAOP.
+
 ## Why DAOP is absent from Fig 8 and Fig 9
 
 DAOP appears in every figure where the comparison is well posed, but not in the
