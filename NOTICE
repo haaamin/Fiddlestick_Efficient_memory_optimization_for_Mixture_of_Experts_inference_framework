@@ -1,0 +1,47 @@
+Fiddlestick
+Copyright 2026 Electronics and Telecommunications Research Institute (ETRI)
+
+This product includes software developed as a derivative of the following
+Apache License 2.0 projects.
+
+------------------------------------------------------------------------------
+Fiddler — https://github.com/efeslab/fiddler
+  Licensed under the Apache License, Version 2.0.
+
+  `src/fiddler_baseline/mixtral.py` is a lightly modified copy of Fiddler, used
+  as the quantitative baseline in the paper. The modifications are:
+    - the expert popularity source is configurable (FS_POPULARITY_JSON)
+    - the offload constants are configurable (FS_LATENCY_CPU, FS_LATENCY_GPU)
+    - the number of cached experts can be forced (FS_FORCE_EXPERTS), which the
+      paper uses to measure the memory floor with the cache emptied
+    - peak and process GPU memory are reported
+  None of these changes alter the placement or offload policy.
+
+  `src/fiddlestick/mixtral.py` builds on the same code base and adds the
+  contribution of this work: sequential in-place streaming of the non-expert
+  layers, double buffered over a dedicated CUDA stream.
+
+------------------------------------------------------------------------------
+DAOP — https://github.com/ecolab-nus/DAOP, commit 08fef33
+  Licensed under the Apache License, Version 2.0. Not redistributed here.
+
+  `patches/daop_instrumentation.patch` is the unified diff applied to an
+  unmodified checkout so that the comparison in the paper can be reproduced.
+  It makes the input/output token grid and the beam width configurable by
+  environment variable, lets the offload constants be supplied externally so
+  that DAOP and this work use the same measured values, and adds peak memory,
+  process GPU memory and expert cache hit-rate counters.
+
+  The patch changes no part of DAOP's algorithm. In particular DAOP's
+  brute-force search over expert placements is left exactly as published.
+
+------------------------------------------------------------------------------
+vLLM — https://github.com/vllm-project/vllm, release 0.32.0
+  Licensed under the Apache License, Version 2.0. Not redistributed here, and
+  not modified; it was run through its public Python API.
+
+------------------------------------------------------------------------------
+Datasets
+  ShareGPT (ShareGPT_V3_unfiltered_cleaned_split) is used to derive the expert
+  popularity ranking and as the primary evaluation workload. C4 (Raffel et al.,
+  JMLR 2020) is used as the held-out workload. Neither is redistributed here.

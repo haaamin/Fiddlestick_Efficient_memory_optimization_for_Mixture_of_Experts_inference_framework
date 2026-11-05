@@ -1,0 +1,110 @@
+[calib] popularity=daop
+Map (num_proc=5):   0%|          | 0/3000 [00:00<?, ? examples/s]Map (num_proc=5): 100%|██████████| 3000/3000 [00:00<00:00, 24309.40 examples/s]
+Loading checkpoint shards:   0%|          | 0/59 [00:00<?, ?it/s]Loading checkpoint shards:   2%|▏         | 1/59 [00:00<00:06,  9.01it/s]Loading checkpoint shards:   5%|▌         | 3/59 [00:00<00:05, 10.62it/s]Loading checkpoint shards:   8%|▊         | 5/59 [00:00<00:04, 11.33it/s]Loading checkpoint shards:  12%|█▏        | 7/59 [00:00<00:04, 11.69it/s]Loading checkpoint shards:  15%|█▌        | 9/59 [00:00<00:04, 11.87it/s]Loading checkpoint shards:  19%|█▊        | 11/59 [00:00<00:03, 12.01it/s]Loading checkpoint shards:  22%|██▏       | 13/59 [00:01<00:03, 11.99it/s]Loading checkpoint shards:  25%|██▌       | 15/59 [00:01<00:03, 11.99it/s]Loading checkpoint shards:  29%|██▉       | 17/59 [00:01<00:03, 12.09it/s]Loading checkpoint shards:  32%|███▏      | 19/59 [00:01<00:03, 12.17it/s]Loading checkpoint shards:  36%|███▌      | 21/59 [00:01<00:03, 12.21it/s]Loading checkpoint shards:  39%|███▉      | 23/59 [00:01<00:02, 12.23it/s]Loading checkpoint shards:  42%|████▏     | 25/59 [00:02<00:02, 12.23it/s]Loading checkpoint shards:  46%|████▌     | 27/59 [00:02<00:02, 12.25it/s]Loading checkpoint shards:  49%|████▉     | 29/59 [00:02<00:02, 12.20it/s]Loading checkpoint shards:  53%|█████▎    | 31/59 [00:02<00:02, 12.21it/s]Loading checkpoint shards:  56%|█████▌    | 33/59 [00:02<00:02, 12.21it/s]Loading checkpoint shards:  59%|█████▉    | 35/59 [00:02<00:01, 12.22it/s]Loading checkpoint shards:  63%|██████▎   | 37/59 [00:03<00:01, 12.20it/s]Loading checkpoint shards:  66%|██████▌   | 39/59 [00:03<00:01, 12.23it/s]Loading checkpoint shards:  69%|██████▉   | 41/59 [00:03<00:01, 12.26it/s]Loading checkpoint shards:  73%|███████▎  | 43/59 [00:03<00:01, 12.28it/s]Loading checkpoint shards:  76%|███████▋  | 45/59 [00:03<00:01, 12.28it/s]Loading checkpoint shards:  80%|███████▉  | 47/59 [00:03<00:00, 12.28it/s]Loading checkpoint shards:  83%|████████▎ | 49/59 [00:04<00:00, 12.27it/s]Loading checkpoint shards:  86%|████████▋ | 51/59 [00:04<00:00, 12.21it/s]Loading checkpoint shards:  90%|████████▉ | 53/59 [00:04<00:00, 12.24it/s]Loading checkpoint shards:  93%|█████████▎| 55/59 [00:04<00:00, 12.25it/s]Loading checkpoint shards:  97%|█████████▋| 57/59 [00:04<00:00, 12.26it/s]Loading checkpoint shards: 100%|██████████| 59/59 [00:04<00:00, 12.34it/s]Loading checkpoint shards: 100%|██████████| 59/59 [00:04<00:00, 12.13it/s]
+Fast_Mixtral Replacement Done!
+Number of experts on GPU: 5/448
+[[0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 1 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 1 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 1 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 1 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 1 0 0 0 0]]
+Model is ready.
+  HIT_RATE 0.0128 (242/18928)
+  CUDA_USED_MIB 16119
+  PEAK_MIB 15457 RESERVED_MIB 15480
+model: mistralai/Mixtral-8x22B-v0.1, dataset: c4, attn_implementation: None, proportion_gpu: 0.192, num_samples: 10, input_token: 16, output_token: 2, 0.54 token/s, sample output: (18, '<s> In the past five years the percentage of weekly mobile banking users has more than doubled')
+  HIT_RATE 0.0131 (234/17920)
+  CUDA_USED_MIB 16119
+  PEAK_MIB 15457 RESERVED_MIB 15480
+model: mistralai/Mixtral-8x22B-v0.1, dataset: c4, attn_implementation: None, proportion_gpu: 0.192, num_samples: 10, input_token: 16, output_token: 4, 0.84 token/s, sample output: (20, '<s> In the past five years the percentage of weekly mobile banking users has more than doubled, from')
+  HIT_RATE 0.0131 (234/17920)
+  CUDA_USED_MIB 16119
+  PEAK_MIB 15457 RESERVED_MIB 15480
+model: mistralai/Mixtral-8x22B-v0.1, dataset: c4, attn_implementation: None, proportion_gpu: 0.192, num_samples: 10, input_token: 16, output_token: 8, 1.09 token/s, sample output: (24, '<s> In the past five years the percentage of weekly mobile banking users has more than doubled, from 8% to')
+  HIT_RATE 0.0131 (234/17920)
+  CUDA_USED_MIB 16119
+  PEAK_MIB 15457 RESERVED_MIB 15480
+model: mistralai/Mixtral-8x22B-v0.1, dataset: c4, attn_implementation: None, proportion_gpu: 0.192, num_samples: 10, input_token: 16, output_token: 16, 1.29 token/s, sample output: (32, '<s> In the past five years the percentage of weekly mobile banking users has more than doubled, from 8% to 18%, and the number of')
+  HIT_RATE 0.0122 (436/35840)
+  CUDA_USED_MIB 16131
+  PEAK_MIB 15460 RESERVED_MIB 15482
+model: mistralai/Mixtral-8x22B-v0.1, dataset: c4, attn_implementation: None, proportion_gpu: 0.192, num_samples: 10, input_token: 32, output_token: 2, 0.44 token/s, sample output: (34, '<s> In the past five years the percentage of weekly mobile banking users has more than tripled — from 9% in 2010 to 30%')
+  HIT_RATE 0.0123 (440/35840)
+  CUDA_USED_MIB 16131
+  PEAK_MIB 15460 RESERVED_MIB 15482
+model: mistralai/Mixtral-8x22B-v0.1, dataset: c4, attn_implementation: None, proportion_gpu: 0.192, num_samples: 10, input_token: 32, output_token: 4, 0.71 token/s, sample output: (36, '<s> In the past five years the percentage of weekly mobile banking users has more than tripled — from 9% in 2010 to 30% in ')
+  HIT_RATE 0.0123 (440/35840)
+  CUDA_USED_MIB 16131
+  PEAK_MIB 15460 RESERVED_MIB 15482
+model: mistralai/Mixtral-8x22B-v0.1, dataset: c4, attn_implementation: None, proportion_gpu: 0.192, num_samples: 10, input_token: 32, output_token: 8, 0.97 token/s, sample output: (40, '<s> In the past five years the percentage of weekly mobile banking users has more than tripled — from 9% in 2010 to 30% in 2015')
+  HIT_RATE 0.0123 (440/35840)
+  CUDA_USED_MIB 16131
+  PEAK_MIB 15460 RESERVED_MIB 15482
+model: mistralai/Mixtral-8x22B-v0.1, dataset: c4, attn_implementation: None, proportion_gpu: 0.192, num_samples: 10, input_token: 32, output_token: 16, 1.20 token/s, sample output: (48, '<s> In the past five years the percentage of weekly mobile banking users has more than tripled — from 9% in 2010 to 30% in 2015 — and the number of users is expected')
+  HIT_RATE 0.0118 (845/71680)
+  CUDA_USED_MIB 16145
+  PEAK_MIB 15473 RESERVED_MIB 15494
+model: mistralai/Mixtral-8x22B-v0.1, dataset: c4, attn_implementation: None, proportion_gpu: 0.192, num_samples: 10, input_token: 64, output_token: 2, 0.25 token/s, sample output: (66, '<s> In the past five years the percentage of weekly mobile banking users has more than tripled — from 9% in 2010 to 30% in 2015 — while weekly branch visitors fell from 40% to 24% in the same time frame. 201')
+  HIT_RATE 0.0117 (841/71680)
+  CUDA_USED_MIB 16147
+  PEAK_MIB 15473 RESERVED_MIB 15494
+model: mistralai/Mixtral-8x22B-v0.1, dataset: c4, attn_implementation: None, proportion_gpu: 0.192, num_samples: 10, input_token: 64, output_token: 4, 0.44 token/s, sample output: (68, '<s> In the past five years the percentage of weekly mobile banking users has more than tripled — from 9% in 2010 to 30% in 2015 — while weekly branch visitors fell from 40% to 24% in the same time frame. 2015 is')
+  HIT_RATE 0.0117 (841/71680)
+  CUDA_USED_MIB 16147
+  PEAK_MIB 15473 RESERVED_MIB 15494
+model: mistralai/Mixtral-8x22B-v0.1, dataset: c4, attn_implementation: None, proportion_gpu: 0.192, num_samples: 10, input_token: 64, output_token: 8, 0.69 token/s, sample output: (72, '<s> In the past five years the percentage of weekly mobile banking users has more than tripled — from 9% in 2010 to 30% in 2015 — while weekly branch visitors fell from 40% to 24% in the same time frame. 2015 is the first year in')
+  HIT_RATE 0.0117 (841/71680)
+  CUDA_USED_MIB 16147
+  PEAK_MIB 15473 RESERVED_MIB 15494
+model: mistralai/Mixtral-8x22B-v0.1, dataset: c4, attn_implementation: None, proportion_gpu: 0.192, num_samples: 10, input_token: 64, output_token: 16, 0.95 token/s, sample output: (80, '<s> In the past five years the percentage of weekly mobile banking users has more than tripled — from 9% in 2010 to 30% in 2015 — while weekly branch visitors fell from 40% to 24% in the same time frame. 2015 is the first year in which the number of mobile banking users has')

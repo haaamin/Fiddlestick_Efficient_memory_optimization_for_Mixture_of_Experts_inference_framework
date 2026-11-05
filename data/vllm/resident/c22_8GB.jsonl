@@ -1,0 +1,2 @@
+{"record": "meta", "system": "vllm", "budget_gib": 8.0, "cpu_offload_gb": 261, "load_s": 344.605838060379, "max_model_len": 256}
+{"record": "agg", "system": "vllm", "input_token": 16, "output_token": 2, "n_sample": 2, "throughput": 0.30471208275464606, "wall_s": 13.127146005630493, "peak_mib": 7661}

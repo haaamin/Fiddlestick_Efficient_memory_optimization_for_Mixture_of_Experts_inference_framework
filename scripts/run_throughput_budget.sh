@@ -1,0 +1,61 @@
+#!/bin/bash
+# prewarm 은 무관함이 대조로 확인됐다(0.44~0.51s, 네 조건 모두 정상).
+# 10-23 재측정분의 prefill 6.9초는 그 시점의 일시적 시스템 상태로 추정된다.
+# -> 조용한 지금, Fiddler/Fiddlestick 을 같은 시간대에 쌍으로 다시 측정한다.
+set -u
+FS=$FS
+DS=$FS/benchmarks/ShareGPT_V3_unfiltered_cleaned_split.json
+log(){ echo "[$(TZ=Asia/Seoul date '+%F %H:%M:%S')] $*"; }
+export CUDA_VISIBLE_DEVICES=0 HF_HOME=$HF_HOME
+export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 TOKENIZERS_PARALLELISM=false
+export OMP_NUM_THREADS=32 MKL_NUM_THREADS=32 FS_NUM_THREADS=32
+NUMA="numactl --physcpubind=32-63 --membind=1"
+MK=$SCRATCH/r2; mkdir -p $MK
+cd $FS
+pct(){ ./venv/bin/python -c "print(f'{$1*1024/81079:.4f}')"; }
+consts(){ ./venv/bin/python -c "
+import json; d=json.load(open('calib/$1.json'))
+print(d['cpu_ms_effective'], d['h2d_pageable_ms'])"; }
+
+# run <디렉토리> <라벨> <시스템> <모델> <calib> <pop> <beams> <mem%>
+run(){ local dir=$1 lab=$2 sys=$3 model=$4 ck=$5 pop=$6 beams=$7 mp=$8
+  local mk=$(echo "${dir##*/}_$lab" | tr '/' '_')
+  [ -f $MK/$mk.done ] && { log "skip $mk"; return 0; }
+  mkdir -p $dir
+  read LC LG < <(consts $ck)
+  log ">>> $mk (load1m=$(cut -d' ' -f1 /proc/loadavg))"
+  FS_MEM_PERCENT=$mp FS_LATENCY_CPU=$LC FS_LATENCY_GPU=$LG FS_POPULARITY_JSON=$FS/$pop \
+  $NUMA timeout 28800 ./venv/bin/python benchmarks/run_bench.py \
+    --system $sys --model "$model" --beam_widths $beams --n_sample 10 \
+    --input_tokens 16,32,64 --output_tokens 2,4,8,16 \
+    --dataset $DS --out $dir/$lab.jsonl > $dir/$lab.log 2>&1 && touch $MK/$mk.done
+  log "<<< $mk exit=$?"
+  [ -f $dir/$lab.jsonl ] && ./venv/bin/python -c "
+import json,collections,statistics as st
+a=collections.defaultdict(list)
+for ln in open('$dir/$lab.jsonl'):
+    r=json.loads(ln)
+    if r.get('record')=='sample': a[(r['input_token'],r['output_token'])].append(r['prefill_time'])
+v=[st.mean(x) for x in a.values()]
+print(f'    prefill 평균 {st.mean(v):.3f}s (최대셀 {max(v):.3f}s)  <- 6.9s 면 오염 재발')"
+}
+X=mistralai/Mixtral-8x7B-v0.1; C=mistralai/Mixtral-8x22B-v0.1
+
+log "########## 8x7B (빠름, 가설 검증) ##########"
+D=$FS/results/v3_x7b_8GB;  run $D fiddler fiddler "$X" d34_32 popularity_8x7b.json 1 $(pct 8)
+                           run $D fiddlestick fiddlestick "$X" d34_32 popularity_8x7b.json 1 $(pct 8)
+D=$FS/results/v3_beam_x7b; run $D fiddler fiddler "$X" d34_32 popularity_8x7b.json 1,2,8 $(pct 16)
+                           run $D fiddlestick fiddlestick "$X" d34_32 popularity_8x7b.json 1,2,8 $(pct 16)
+
+log "########## 8x22B ##########"
+for g in 8 16 24 32 40; do
+  D=$FS/results/v3_c22_${g}GB
+  run $D fiddler     fiddler     "$C" d34_22b_32 popularity_8x22b.json 1 $(pct $g)
+  run $D fiddlestick fiddlestick "$C" d34_22b_32 popularity_8x22b.json 1 $(pct $g)
+done
+D=$FS/results/v3_beam_c22
+run $D fiddler     fiddler     "$C" d34_22b_32 popularity_8x22b.json 1,2,8 $(pct 16)
+run $D fiddlestick fiddlestick "$C" d34_22b_32 popularity_8x22b.json 1,2,8 $(pct 16)
+
+log "########## redo2 DONE ##########"
+touch $SCRATCH/redo2.done

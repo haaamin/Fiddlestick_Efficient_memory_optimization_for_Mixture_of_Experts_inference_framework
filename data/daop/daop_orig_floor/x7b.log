@@ -1,0 +1,42 @@
+[calib] popularity=daop
+Map (num_proc=5):   0%|          | 0/4096 [00:00<?, ? examples/s]Map (num_proc=5): 100%|██████████| 4096/4096 [00:00<00:00, 32434.06 examples/s]
+Loading checkpoint shards:   0%|          | 0/19 [00:00<?, ?it/s]Loading checkpoint shards:   5%|▌         | 1/19 [00:00<00:01,  9.39it/s]Loading checkpoint shards:  16%|█▌        | 3/19 [00:00<00:01, 10.99it/s]Loading checkpoint shards:  26%|██▋       | 5/19 [00:00<00:01, 11.83it/s]Loading checkpoint shards:  37%|███▋      | 7/19 [00:00<00:00, 12.27it/s]Loading checkpoint shards:  47%|████▋     | 9/19 [00:00<00:00, 12.55it/s]Loading checkpoint shards:  58%|█████▊    | 11/19 [00:00<00:00, 12.78it/s]Loading checkpoint shards:  68%|██████▊   | 13/19 [00:01<00:00, 12.91it/s]Loading checkpoint shards:  79%|███████▉  | 15/19 [00:01<00:00, 13.01it/s]Loading checkpoint shards:  89%|████████▉ | 17/19 [00:01<00:00, 13.02it/s]Loading checkpoint shards: 100%|██████████| 19/19 [00:01<00:00, 12.96it/s]Loading checkpoint shards: 100%|██████████| 19/19 [00:01<00:00, 12.61it/s]
+Fast_Mixtral Replacement Done!
+Number of experts on GPU: -12/256
+[[0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0]]
+Model is ready.
+  HIT_RATE 0.0000 (0/1600)
+  CUDA_USED_MIB 4813
+  PEAK_MIB 3949 RESERVED_MIB 4206
+model: mistralai/Mixtral-8x7B-v0.1, dataset: sharegpt, attn_implementation: None, proportion_gpu: 0.0001, num_samples: 1, input_token: 16, output_token: 2, 1.56 token/s, sample output: (18, '<s> I want you to act as my startup and programming tutor. You are to help')

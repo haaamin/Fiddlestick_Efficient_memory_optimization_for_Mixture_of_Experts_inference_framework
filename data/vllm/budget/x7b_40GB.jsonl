@@ -1,0 +1,13 @@
+{"record": "meta", "system": "vllm", "budget_gib": 40.0, "cpu_offload_gb": 51, "load_s": 79.38710522651672, "max_model_len": 256}
+{"record": "agg", "system": "vllm", "input_token": 16, "output_token": 2, "n_sample": 10, "throughput": 1.5202691210503754, "wall_s": 13.1555655002594, "peak_mib": 40747}
+{"record": "agg", "system": "vllm", "input_token": 16, "output_token": 4, "n_sample": 10, "throughput": 2.0987476253508635, "wall_s": 19.058985233306885, "peak_mib": 40747}
+{"record": "agg", "system": "vllm", "input_token": 16, "output_token": 8, "n_sample": 10, "throughput": 2.592119143058638, "wall_s": 30.862778902053833, "peak_mib": 40747}
+{"record": "agg", "system": "vllm", "input_token": 16, "output_token": 16, "n_sample": 10, "throughput": 2.937347745609159, "wall_s": 54.470908403396606, "peak_mib": 40747}
+{"record": "agg", "system": "vllm", "input_token": 32, "output_token": 2, "n_sample": 10, "throughput": 1.5746944445059743, "wall_s": 12.700876712799072, "peak_mib": 40747}
+{"record": "agg", "system": "vllm", "input_token": 32, "output_token": 4, "n_sample": 10, "throughput": 2.167330374251294, "wall_s": 18.45588493347168, "peak_mib": 40747}
+{"record": "agg", "system": "vllm", "input_token": 32, "output_token": 8, "n_sample": 10, "throughput": 2.6434810767393055, "wall_s": 30.26312565803528, "peak_mib": 40747}
+{"record": "agg", "system": "vllm", "input_token": 32, "output_token": 16, "n_sample": 10, "throughput": 2.9700195723664136, "wall_s": 53.87169885635376, "peak_mib": 40747}
+{"record": "agg", "system": "vllm", "input_token": 64, "output_token": 2, "n_sample": 10, "throughput": 1.4564741216520214, "wall_s": 13.731792211532593, "peak_mib": 40747}
+{"record": "agg", "system": "vllm", "input_token": 64, "output_token": 4, "n_sample": 10, "throughput": 2.1144456811985286, "wall_s": 18.917487621307373, "peak_mib": 40747}
+{"record": "agg", "system": "vllm", "input_token": 64, "output_token": 8, "n_sample": 10, "throughput": 2.6039510712143823, "wall_s": 30.722543478012085, "peak_mib": 40747}
+{"record": "agg", "system": "vllm", "input_token": 64, "output_token": 16, "n_sample": 10, "throughput": 2.9448430425404677, "wall_s": 54.33226752281189, "peak_mib": 40747}

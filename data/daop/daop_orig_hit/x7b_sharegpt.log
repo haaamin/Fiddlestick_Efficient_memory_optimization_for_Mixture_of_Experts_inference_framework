@@ -1,0 +1,86 @@
+[calib] popularity=daop
+Map (num_proc=5):   0%|          | 0/4096 [00:00<?, ? examples/s]Map (num_proc=5): 100%|██████████| 4096/4096 [00:00<00:00, 33556.79 examples/s]
+Loading checkpoint shards:   0%|          | 0/19 [00:00<?, ?it/s]Loading checkpoint shards:   5%|▌         | 1/19 [00:00<00:01,  9.70it/s]Loading checkpoint shards:  16%|█▌        | 3/19 [00:00<00:01, 11.20it/s]Loading checkpoint shards:  26%|██▋       | 5/19 [00:00<00:01, 12.02it/s]Loading checkpoint shards:  37%|███▋      | 7/19 [00:00<00:00, 12.56it/s]Loading checkpoint shards:  47%|████▋     | 9/19 [00:00<00:00, 12.87it/s]Loading checkpoint shards:  58%|█████▊    | 11/19 [00:00<00:00, 13.12it/s]Loading checkpoint shards:  68%|██████▊   | 13/19 [00:01<00:00, 13.24it/s]Loading checkpoint shards:  79%|███████▉  | 15/19 [00:01<00:00, 13.33it/s]Loading checkpoint shards:  89%|████████▉ | 17/19 [00:01<00:00, 13.38it/s]Loading checkpoint shards: 100%|██████████| 19/19 [00:01<00:00, 13.40it/s]Loading checkpoint shards: 100%|██████████| 19/19 [00:01<00:00, 12.96it/s]
+Fast_Mixtral Replacement Done!
+Number of experts on GPU: 34/256
+[[0 0 1 0 0 0 0 0]
+ [0 0 0 1 0 0 0 0]
+ [0 0 0 0 1 0 0 0]
+ [0 0 0 0 0 0 0 1]
+ [0 0 0 1 0 0 0 0]
+ [0 0 0 0 0 1 0 0]
+ [0 0 0 0 0 0 1 0]
+ [0 1 0 0 0 0 0 0]
+ [0 0 0 0 0 1 0 0]
+ [0 1 0 0 0 0 0 0]
+ [0 0 1 0 0 0 0 0]
+ [0 1 0 0 0 0 1 0]
+ [0 0 0 0 0 1 0 0]
+ [1 0 0 0 0 0 0 0]
+ [0 1 0 0 0 0 0 0]
+ [0 0 0 0 0 0 1 0]
+ [0 0 0 0 1 0 0 0]
+ [0 0 0 0 1 0 0 0]
+ [0 0 0 0 1 0 0 0]
+ [0 0 0 0 0 1 0 0]
+ [1 0 0 0 0 0 0 0]
+ [0 1 0 0 0 0 0 0]
+ [1 0 0 0 0 0 0 0]
+ [0 0 0 0 1 0 0 0]
+ [0 0 0 1 0 0 0 0]
+ [0 1 0 0 0 0 0 0]
+ [0 0 1 0 0 0 0 0]
+ [0 0 0 0 0 1 0 0]
+ [0 0 1 0 0 0 0 0]
+ [0 0 0 1 0 0 0 0]
+ [0 0 0 0 1 0 0 0]
+ [0 0 0 1 0 0 1 0]]
+Model is ready.
+  HIT_RATE 0.1587 (1716/10816)
+  CUDA_USED_MIB 16347
+  PEAK_MIB 15373 RESERVED_MIB 15630
+model: mistralai/Mixtral-8x7B-v0.1, dataset: sharegpt, attn_implementation: None, proportion_gpu: 0.192, num_samples: 10, input_token: 16, output_token: 2, 1.01 token/s, sample output: (18, "<s> I am building an Elven Capital with all of it's history, culture,")
+  HIT_RATE 0.1603 (1641/10240)
+  CUDA_USED_MIB 16347
+  PEAK_MIB 15373 RESERVED_MIB 15630
+model: mistralai/Mixtral-8x7B-v0.1, dataset: sharegpt, attn_implementation: None, proportion_gpu: 0.192, num_samples: 10, input_token: 16, output_token: 4, 3.17 token/s, sample output: (20, "<s> I am building an Elven Capital with all of it's history, culture, and l")
+  HIT_RATE 0.1603 (1641/10240)
+  CUDA_USED_MIB 16347
+  PEAK_MIB 15373 RESERVED_MIB 15630
+model: mistralai/Mixtral-8x7B-v0.1, dataset: sharegpt, attn_implementation: None, proportion_gpu: 0.192, num_samples: 10, input_token: 16, output_token: 8, 4.91 token/s, sample output: (24, "<s> I am building an Elven Capital with all of it's history, culture, and lore. I am")
+  HIT_RATE 0.1603 (1641/10240)
+  CUDA_USED_MIB 16347
+  PEAK_MIB 15373 RESERVED_MIB 15630
+model: mistralai/Mixtral-8x7B-v0.1, dataset: sharegpt, attn_implementation: None, proportion_gpu: 0.192, num_samples: 10, input_token: 16, output_token: 16, 6.63 token/s, sample output: (32, "<s> I am building an Elven Capital with all of it's history, culture, and lore. I am also building a world for it to exist")
+  HIT_RATE 0.1679 (3439/20480)
+  CUDA_USED_MIB 16369
+  PEAK_MIB 15377 RESERVED_MIB 15632
+model: mistralai/Mixtral-8x7B-v0.1, dataset: sharegpt, attn_implementation: None, proportion_gpu: 0.192, num_samples: 10, input_token: 32, output_token: 2, 1.58 token/s, sample output: (34, "<s> You will be provided with a detailed summary of a computer program, and your task is to generate a Python function that implements the program's behavior based on the summary")
+  HIT_RATE 0.1684 (3449/20480)
+  CUDA_USED_MIB 16369
+  PEAK_MIB 15377 RESERVED_MIB 15632
+model: mistralai/Mixtral-8x7B-v0.1, dataset: sharegpt, attn_implementation: None, proportion_gpu: 0.192, num_samples: 10, input_token: 32, output_token: 4, 3.23 token/s, sample output: (36, "<s> You will be provided with a detailed summary of a computer program, and your task is to generate a Python function that implements the program's behavior based on the summary.\n")
+  HIT_RATE 0.1684 (3449/20480)
+  CUDA_USED_MIB 16369
+  PEAK_MIB 15377 RESERVED_MIB 15632
+model: mistralai/Mixtral-8x7B-v0.1, dataset: sharegpt, attn_implementation: None, proportion_gpu: 0.192, num_samples: 10, input_token: 32, output_token: 8, 4.98 token/s, sample output: (40, "<s> You will be provided with a detailed summary of a computer program, and your task is to generate a Python function that implements the program's behavior based on the summary.\nTDM is a new")
+  HIT_RATE 0.1684 (3449/20480)
+  CUDA_USED_MIB 16369
+  PEAK_MIB 15377 RESERVED_MIB 15632
+model: mistralai/Mixtral-8x7B-v0.1, dataset: sharegpt, attn_implementation: None, proportion_gpu: 0.192, num_samples: 10, input_token: 32, output_token: 16, 6.80 token/s, sample output: (48, "<s> You will be provided with a detailed summary of a computer program, and your task is to generate a Python function that implements the program's behavior based on the summary.\nTDM is a new programming language that is designed to be more")
+  HIT_RATE 0.1629 (6671/40960)
+  CUDA_USED_MIB 16403
+  PEAK_MIB 15387 RESERVED_MIB 15660
+model: mistralai/Mixtral-8x7B-v0.1, dataset: sharegpt, attn_implementation: None, proportion_gpu: 0.192, num_samples: 10, input_token: 64, output_token: 2, 1.37 token/s, sample output: (66, "<s> You will be provided with a detailed summary of a computer program, and your task is to generate a Python function that implements the program's behavior based on that summary. You should write the function code as accurately as possible based on the description, without providing any additional explanations or assumptions.Your implementation should conform to the following")
+  HIT_RATE 0.1635 (6695/40960)
+  CUDA_USED_MIB 16403
+  PEAK_MIB 15387 RESERVED_MIB 15660
+model: mistralai/Mixtral-8x7B-v0.1, dataset: sharegpt, attn_implementation: None, proportion_gpu: 0.192, num_samples: 10, input_token: 64, output_token: 4, 2.52 token/s, sample output: (68, "<s> You will be provided with a detailed summary of a computer program, and your task is to generate a Python function that implements the program's behavior based on that summary. You should write the function code as accurately as possible based on the description, without providing any additional explanations or assumptions.Your implementation should conform to the following requirements:")
+  HIT_RATE 0.1635 (6695/40960)
+  CUDA_USED_MIB 16403
+  PEAK_MIB 15387 RESERVED_MIB 15660
+model: mistralai/Mixtral-8x7B-v0.1, dataset: sharegpt, attn_implementation: None, proportion_gpu: 0.192, num_samples: 10, input_token: 64, output_token: 8, 4.09 token/s, sample output: (72, "<s> You will be provided with a detailed summary of a computer program, and your task is to generate a Python function that implements the program's behavior based on that summary. You should write the function code as accurately as possible based on the description, without providing any additional explanations or assumptions.Your implementation should conform to the following requirements:\nTDM\n\n")
+  HIT_RATE 0.1635 (6695/40960)
+  CUDA_USED_MIB 16403
+  PEAK_MIB 15387 RESERVED_MIB 15660
+model: mistralai/Mixtral-8x7B-v0.1, dataset: sharegpt, attn_implementation: None, proportion_gpu: 0.192, num_samples: 10, input_token: 64, output_token: 16, 6.00 token/s, sample output: (80, "<s> You will be provided with a detailed summary of a computer program, and your task is to generate a Python function that implements the program's behavior based on that summary. You should write the function code as accurately as possible based on the description, without providing any additional explanations or assumptions.Your implementation should conform to the following requirements:\nTDM\n\n- The function's name is `")
