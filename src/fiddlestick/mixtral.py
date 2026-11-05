@@ -596,6 +596,8 @@ class FiddlerMixtral:
         for i_layer, layer in enumerate(self.model.layers):
             with torch.cuda.stream(streams0):
                 self.get_current_layer(i_layer, torch.cuda.current_stream().cuda_stream)
+                _wready = torch.cuda.Event()
+                _wready.record(streams0)
                 if (i_layer+1 < self.n_layer):
                     self.bring_block_to_gpu(i_layer + 1, streams1.cuda_stream)
                     #print("bring_block :",i_layer + 1)
@@ -605,6 +607,9 @@ class FiddlerMixtral:
             #    #self.get_current_layer(i_layer)  
             #    if (i_layer+1 < self.n_layer):
             #        self.bring_block_to_gpu(i_layer + 1)
+            # Wait for the current layer's weight copy only, not for the prefetch
+            # of the next layer, so the double buffering is preserved.
+            streams2.wait_event(_wready)
             with torch.cuda.stream(streams2):#[i_layer]):
                 #print("forward pass start!")
                 #print("current idx : ",self.current_self_attn.layer_idx)
