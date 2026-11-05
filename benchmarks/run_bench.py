@@ -24,7 +24,7 @@ if __name__ == "__main__":
         "--system",
         type=str,
         required=True,
-        choices=["fiddler", "fiddlestick", "fiddler_phi", "fiddlestick_phi"],
+        choices=["fiddler", "fiddlestick"],
         help="fiddler -> ../src, fiddlestick -> ../src_hamin",
     )
     parser.add_argument(
@@ -60,11 +60,10 @@ if __name__ == "__main__":
     # resolve relative to this file, not the cwd: the sweep driver runs from the
     # repo root while the original latency.py ran from benchmarks/
     _HERE = os.path.dirname(os.path.abspath(__file__))
-    # Mixtral lives in src/ and src_hamin/.
-    _SRC = {"fiddler": "src", "fiddlestick": "src_hamin",
-            "fiddler_phi": "src_phi", "fiddlestick_phi": "src_hamin_phi"}
-    sys.path.append(os.path.join(_HERE, "..", _SRC[args.system]))
-    from fiddler import FiddlerMixtral  # noqa: E402
+    # Both systems live under src/ as importable packages.
+    _PKG = {"fiddler": "fiddler_baseline", "fiddlestick": "fiddlestick"}
+    sys.path.insert(0, os.path.join(_HERE, "..", "src"))
+    FiddlerMixtral = __import__(_PKG[args.system], fromlist=["FiddlerMixtral"]).FiddlerMixtral
 
     import torch  # noqa: E402
 

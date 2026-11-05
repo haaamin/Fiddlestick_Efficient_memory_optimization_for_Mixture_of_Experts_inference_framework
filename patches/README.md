@@ -6,8 +6,18 @@ at commit `08fef33`:
 ```
 git clone https://github.com/ecolab-nus/DAOP && cd DAOP
 git checkout 08fef33
-git apply /path/to/daop_instrumentation.patch
+cp /path/to/patches/_phimoe_compat.py model/
+git apply /path/to/patches/daop_instrumentation.patch
 ```
+
+`_phimoe_compat.py` has to be copied in because the patch redirects DAOP's
+PhiMoE import to it. DAOP imports those symbols from
+`transformers.models.phimoe`, which does not exist in transformers 4.44, the
+version it runs on, and the Mixtral classes sit in the same files, so without
+this the import fails before any Mixtral work can start. The module re-exports
+the transformers symbols and stubs the PhiMoE classes, which is sufficient for
+the Mixtral evaluation in the paper. Set `DAOP_PHIMOE_DIR` to a PhiMoE model
+directory if you want the real classes instead.
 
 ## What it changes
 
