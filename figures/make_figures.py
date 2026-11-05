@@ -144,17 +144,16 @@ save(fig, "Fig7.png")
 fig, ax = plt.subplots(figsize=(7.2, 4.2))
 x = np.arange(2); w = .25
 TOT = {"x7b": 256, "c22": 448}
-for j, (n, c) in enumerate((("Fiddlestick", "#4c72b0"), ("Fiddler", "#8c8c8c"),
-                            ("DAOP", "#c44e52"))):
+for j, (n, c) in enumerate((("Fiddlestick", "#4c72b0"), ("Fiddler", "#8c8c8c"))):
     k = n
     h = [HT[m]["ShareGPT"][k]["hit"] for m in MS]
     cv = [HT[m]["ShareGPT"][k]["coverage"] for m in MS]
     ne = [HT[m]["ShareGPT"][k]["nexp"] for m in MS]
-    ax.bar(x + (j - 1) * w, h, w, color=c, label=n)
+    ax.bar(x + (j - 0.5) * w, h, w, color=c, label=n)
     for i, (v, cc, nn) in enumerate(zip(h, cv, ne)):
-        ax.text(i + (j - 1) * w, v + .006, f"{v:.3f}", ha="center", fontsize=8)
-        ax.text(i + (j - 1) * w, .006, f"{nn}", ha="center", fontsize=7, color="white")
-        ax.hlines(cc, i + (j - 1) * w - w/2, i + (j - 1) * w + w/2,
+        ax.text(i + (j - 0.5) * w, v + .006, f"{v:.3f}", ha="center", fontsize=8)
+        ax.text(i + (j - 0.5) * w, .006, f"{nn}", ha="center", fontsize=7, color="white")
+        ax.hlines(cc, i + (j - 0.5) * w - w/2, i + (j - 0.5) * w + w/2,
                   color="#111", ls=":", lw=1.3)
 ax.plot([], [], ls=":", color="#111", lw=1.3, label="Coverage (random-placement baseline)")
 ax.set_xticks(x); ax.set_xticklabels([MN[m] for m in MS], fontsize=10)
@@ -163,7 +162,7 @@ ax.legend(fontsize=8.5); ax.grid(axis="y", alpha=.3); ax.set_axisbelow(True)
 save(fig, "Fig8.png")
 
 # ===== Fig9 — held-out validation: hit rate, per model =====
-SYS9 = (("Fiddlestick", "#4c72b0"), ("Fiddler", "#8c8c8c"), ("DAOP", "#c44e52"))
+SYS9 = (("Fiddlestick", "#4c72b0"), ("Fiddler", "#8c8c8c"))
 KEY = {n: n for n, _ in SYS9}
 fig, axes = plt.subplots(1, 2, figsize=(10, 4.2))
 for ax, m, tag in zip(axes, MS, "ab"):

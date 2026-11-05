@@ -40,7 +40,9 @@ def _samples(path, beam=1):
         k = "%sx%s" % (r["input_token"], r["output_token"])
         tp[k].append(r["output_token"] / (r["prefill_time"] + r["decode_time"]))
         pf[k].append(r["prefill_time"])
-        dc[k].append(r["decode_time"] / r["output_token"])
+        # The first token comes out of the prefill pass, so the decode stage
+        # performs N-1 forward steps for an output of N tokens.
+        dc[k].append(r["decode_time"] / (r["output_token"] - 1))
         if "hit_rate" in r:
             hit[k].append(r["hit_rate"])
     if not tp:
@@ -162,10 +164,11 @@ def main():
                 if v and v.get("hit") is not None:
                     e[k] = {"hit": v["hit"], "nexp": v["nexp"],
                             "coverage": v["nexp"] / N_EXPERT[m]}
-            v = _daop_log("%s/daop/daop_orig_hit/%s_%s.log" % (D, m, key))
-            if v and v.get("hit") is not None:
-                e["DAOP"] = {"hit": v["hit"], "nexp": v["nexp"],
-                             "coverage": v["nexp"] / N_EXPERT[m]}
+            # DAOP is deliberately absent here. During decode it predicts the
+            # placement for the next layer from the preceding layer's gate,
+            # pre-computes the CPU side and substitutes a resident expert when
+            # both of the top two are on the CPU, so "was the requested expert
+            # resident" does not mean the same thing for it. See README.
             out["hit"][m][corpus] = e
         out["heldout"][m] = {k: _samples("%s/ours/%s/%s.jsonl" % (D, d["c4"], s))
                              for k, s in (("Fiddler", "fiddler"), ("Fiddlestick", "fiddlestick"))}

@@ -42,11 +42,23 @@ writes are byte-identical to the ones in the paper.
 | Fig 5 | Minimum GPU residency, expert cache forced to zero | `data/ours/residency`, `data/daop/daop_orig_floor` |
 | Fig 6 | Throughput against the VRAM budget | `data/ours/{v5_x7b_*GB,v3_c22_*GB}`, `data/daop/daop_orig`, `data/vllm/budget` |
 | Fig 7 | Throughput gain against beam width | `data/ours/v4_beam_{x7b,c22}` |
-| Fig 8 | Expert cache hit rate on the calibration corpus | `data/ours/{final_b1_n10,v3_c22_16GB}`, `data/daop/daop_orig_hit` |
-| Fig 9 | Hit rate on a held-out corpus | `data/ours/{c4_b1_n10,c4_c22}`, `data/daop/daop_orig_hit` |
+| Fig 8 | Expert cache hit rate on the calibration corpus | `data/ours/{final_b1_n10,v3_c22_16GB}` |
+| Fig 9 | Hit rate on a held-out corpus | `data/ours/{c4_b1_n10,c4_c22}` |
 
 Every run in one figure comes from a single measurement session, so no curve
 mixes batches taken on different days.
+
+## Why DAOP is absent from Fig 8 and Fig 9
+
+DAOP appears in every figure where the comparison is well posed, but not in the
+two hit-rate figures. During decode it predicts the placement for the next
+layer from the preceding layer's gate, pre-computes the CPU-side results, and
+substitutes a resident expert when both of the top two are on the CPU. A hit
+rate defined as whether the requested expert was resident therefore does not
+mean the same thing for that design as for Fiddler and Fiddlestick, which share
+a cache mechanism. `data/daop/daop_orig_hit/` keeps the logs that were recorded
+while investigating this; their HIT_RATE lines count the prefill phase only and
+should not be read as comparable to the native numbers.
 
 ## Measurement conditions
 
