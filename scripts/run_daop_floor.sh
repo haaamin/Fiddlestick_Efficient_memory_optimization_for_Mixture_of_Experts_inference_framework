@@ -1,5 +1,7 @@
 #!/bin/bash
-# DAOP 4차: 최소 상주량(expert 캐시 0개) 재측정, 원본 전수탐색 코드.
+# DAOP minimum GPU residency: proportion_gpu is set low enough that no expert
+# is cached, leaving only the non-expert weights resident, and the GPU memory
+# the process occupies is recorded. Produces data/daop/daop_orig_floor.
 set -u
 D=$DAOP; FS=$FS
 log(){ echo "[$(TZ=Asia/Seoul date '+%F %H:%M:%S')] $*"; }
@@ -13,12 +15,12 @@ ck(){ $FS/venv/bin/python -c "
 import json; d=json.load(open('$FS/calib/$1.json'))
 print(d['cpu_ms_effective'], d['h2d_pageable_ms'])"; }
 n=$(grep -c "for config in range(1 << self.n_expert)" $D/model/modeling_daop.py)
-[ "$n" = "2" ] || { log "ABORT: 전수탐색 $n 개"; exit 1; }
+[ "$n" = "2" ] || { log "ABORT: found $n brute-force blocks, expected 2"; exit 1; }
 cd $D; export PYTHONPATH=$D
 res(){ local lab=$1 model=$2 cal=$3
   [ -f $MK/$lab.done ] && { log "skip $lab"; return; }
   read LC LG < <(ck $cal)
-  log ">>> 상주량 $lab"
+  log ">>> residency $lab"
   FS_LATENCY_CPU=$LC FS_LATENCY_GPU=$LG DAOP_INPUTS=16 DAOP_OUTPUTS=2 \
   $NUMA timeout 7200 ./venv/bin/python DAOP/daop_infer.py \
     --model "$model" --dataset_name sharegpt --proportion_gpu 0.0001 \

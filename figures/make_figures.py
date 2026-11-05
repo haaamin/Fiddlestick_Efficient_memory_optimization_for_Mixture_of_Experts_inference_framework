@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-"""논문의 Fig3~Fig9 를 figures/data/paper_data.json 에서 생성한다.
+"""Produce Fig 3 to Fig 9 of the paper from figures/data/paper_data.json.
 
   python figures/build_data.py && python figures/make_figures.py
 
-두 모델(Mixtral-8x7B / 8x22B)과 네 시스템(Fiddlestick / Fiddler / DAOP / vLLM)만
-다룬다. Phi-3.5-MoE 와 KTransformers 는 논문에서 제외되었다.
+Covers two models (Mixtral-8x7B, 8x22B) and four systems (Fiddlestick,
+Fiddler, DAOP, vLLM). Phi-3.5-MoE and KTransformers are not part of the paper.
 """
 import json, os, statistics as st
 import matplotlib; matplotlib.use("Agg")
@@ -101,7 +101,8 @@ for ax, m in zip(axes, MS):
             e = D["exp4"].get(f"{m}|{gb}", {}).get(n)
             if e: xs.append(gb); ys.append(e["mean"])
         if xs: ax.plot(xs, ys, MK[n] + "-", ms=5.5, lw=1.9, color=c, label=n)
-    # 선이 16GB 부터 시작하는 이유를 한 줄 주석으로만 밝힌다 (띠/마커는 과함)
+    # A line starting at 16 GB means the system could not run below that budget;
+# say so in one note rather than shading the region.
     notes = []
     for gb in GB:
         e = D["exp4"].get(f"{m}|{gb}", {})

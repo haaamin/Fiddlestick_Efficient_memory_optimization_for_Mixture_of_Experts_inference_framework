@@ -21,7 +21,7 @@ index f1a305a..64245ec 100644
                  start = time.time()
  
 -                outputs_ids = model._model.generate(
-+                _nb = int(os.environ.get("FS_BEAM", "1"))   # 기본 1 = 원본 greedy
++                _nb = int(os.environ.get("FS_BEAM", "1"))   # 1, the default, is the original greedy path
 +                _gkw = dict(
                      input_ids=input_ids[:, :input_token],
                      max_new_tokens=output_token,
@@ -41,11 +41,11 @@ index f1a305a..64245ec 100644
                  token_count += output_token
                  prediction_text = model.tokenizer.decode(outputs_ids[0])
  
-+            # PEAK_MEM_REPORT: GPU 상주 메모리 측정용 (계측만 추가)
++            # PEAK_MEM_REPORT: records GPU memory; instrumentation only
 +
 +            import torch as _t
 +
-+            # HIT_RATE: expert 캐시 적중률 (계측만)
++            # HIT_RATE: expert cache hit rate; instrumentation only
 +
 +            try:
 +
@@ -85,10 +85,10 @@ index 56ef5a7..8aa2e92 100644
 -latency_cpu = 3.5
 -latency_gpu = 30
 +import os as _os
-+# node 4코어 실측 유효 교정값으로 통일 (원본: latency_cpu = 3.5 / latency_gpu = 30, 손익분기 8.6토큰)
-+#   latency_cpu = cpu_ms(2토큰)/2  (고정비 포함)
-+#   latency_gpu = H2D pageable 실측  -> 손익분기 3.8토큰
-+# 논문 구현(7/70, 손익분기 10)과도 기준을 맞추기 위해 환경변수로 덮어쓸 수 있게 한다.
++# Calibrated on this machine so that every system uses the same constants
++#   latency_cpu: measured CPU expert time per token, fixed cost included
++#   latency_gpu: measured host-to-device transfer time for one expert
++# DAOP's defaults are 3.5 and 30; both are overridable by environment variable.
 +latency_cpu = float(_os.environ.get("FS_LATENCY_CPU", "2.371139"))
 +latency_gpu = float(_os.environ.get("FS_LATENCY_GPU", "9.125178"))
  largest_num = 8   # half of the number of experts for each transformer layer
@@ -96,13 +96,13 @@ index 56ef5a7..8aa2e92 100644
  #####################################
  
 -cache_directory = "/home/yujie/.cache/huggingface/hub/"
-+cache_directory = "$HF_HOME/hub/"
++cache_directory = _os.path.join(_os.environ.get("HF_HOME", _os.path.expanduser("~/.cache/huggingface")), "hub") + "/"
  swap_in_out = 1.05
  first_predict_layer = 5
  
 -popular_experts_small = decoding_experts_small_sharegpt
 +_pop_sel = _os.environ.get("DAOP_POPULARITY", "daop")
-+# fiddler: Fiddler/Fiddlestick 이 쓰는 것과 동일한 랭킹으로 통일 (ablation)
++# use the same expert popularity ranking as Fiddler and Fiddlestick
 +popular_experts_small = (popular_experts_sharegpt_fiddler
 +                         if _pop_sel == "fiddler"
 +                         else decoding_experts_small_sharegpt)
@@ -133,7 +133,7 @@ index 83ddbf6..78b0451 100644
                  start = time.time()
  
 -                outputs_ids = model._model.generate(
-+                _nb = int(os.environ.get("FS_BEAM", "1"))   # 기본 1 = 원본 greedy
++                _nb = int(os.environ.get("FS_BEAM", "1"))   # 1, the default, is the original greedy path
 +                _gkw = dict(
                      input_ids=input_ids[:, :input_token],
                      max_new_tokens=output_token,
@@ -153,7 +153,7 @@ index 83ddbf6..78b0451 100644
                  token_count += output_token
                  prediction_text = model.tokenizer.decode(outputs_ids[0])
  
-+            # PEAK_MEM_REPORT: GPU 상주 메모리 측정용 (계측만 추가)
++            # PEAK_MEM_REPORT: records GPU memory; instrumentation only
 +
 +            import torch as _t
 +
@@ -181,7 +181,7 @@ index 7ed7baa..63f565c 100644
  
          self.n_layer = config.num_hidden_layers
          self.n_expert = config.num_local_experts
-+        # HIT_RATE_METRIC: 적중률 계측용 (계측만 추가)
++        # HIT_RATE_METRIC: counts cache hits; instrumentation only
 +        self.cnt_expert_hit = 0
 +        self.cnt_expert_all = 0
          self.top_k = config.num_experts_per_tok
@@ -200,7 +200,7 @@ index 7ed7baa..63f565c 100644
  
          self.n_layer = config.num_hidden_layers
          self.n_expert = config.num_local_experts
-+        # HIT_RATE_METRIC: 적중률 계측용 (계측만 추가)
++        # HIT_RATE_METRIC: counts cache hits; instrumentation only
 +        self.cnt_expert_hit = 0
 +        self.cnt_expert_all = 0
          self.top_k = config.num_experts_per_tok

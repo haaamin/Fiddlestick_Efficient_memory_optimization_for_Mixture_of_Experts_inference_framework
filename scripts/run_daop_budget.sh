@@ -1,7 +1,9 @@
 #!/bin/bash
-# DAOP 예산축 재측정 — 2^n 전수탐색(원본) 복원 상태에서 재실행.
-# argmin 치환을 되돌렸으므로 Fig3(16GB)·Fig6(예산 스윕)이 모두 원본 코드 한 배치로 통일된다.
-# Phi-3.5-MoE 는 논문에서 제외되어 돌리지 않는다.
+# DAOP across VRAM budgets, 8 to 40 GB. DAOP runs its published algorithm; the
+# patch in patches/ adds only instrumentation. The script refuses to start
+# unless DAOP's own brute-force expert partition is present in both model
+# files, so that an accidentally modified checkout cannot be measured.
+# Produces data/daop/daop_orig.
 set -u
 FS=$FS
 D=$DAOP
@@ -18,10 +20,10 @@ import json; d=json.load(open('$FS/calib/$1.json'))
 print(d['cpu_ms_effective'], d['h2d_pageable_ms'])"; }
 X=mistralai/Mixtral-8x7B-v0.1; C=mistralai/Mixtral-8x22B-v0.1
 
-# 되돌리기 검증: 전수탐색이 실제로 복원됐는지 확인하고, 아니면 중단
+# Refuse to run unless DAOP's own brute-force expert partition is present.
 n=$(grep -c "for config in range(1 << self.n_expert)" $D/model/modeling_daop.py)
-[ "$n" = "2" ] || { log "ABORT: 전수탐색 블록 $n 개 (2 이어야 함)"; exit 1; }
-log "전수탐색 복원 확인 OK"
+[ "$n" = "2" ] || { log "ABORT: found $n brute-force blocks, expected 2"; exit 1; }
+log "brute-force partition verified"
 
 cd $D; export PYTHONPATH=$D
 dsweep(){ local tag=$1 model=$2 cal=$3; shift 3

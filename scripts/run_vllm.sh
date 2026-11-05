@@ -1,8 +1,8 @@
 #!/bin/bash
-# vLLM 예산축 재측정.
-# 앞선 측정은 cpu_offload_gb 를 모델별로 고정해, 예산을 늘려도 늘어난 몫이 전부
-# KV 캐시로 가고 가중치는 CPU 에 남아 처리량이 평탄했다(불공정한 설정).
-# 예산마다 "가능한 한 많은 가중치를 GPU 에 두는" offload 값을 탐색해서 다시 잰다.
+# vLLM across VRAM budgets. cpu_offload_gb is searched at each budget for the
+# setting that keeps as many weights resident as the budget allows: holding it
+# fixed would let the added budget be absorbed by the key-value cache instead,
+# which understates what vLLM can do. Produces data/vllm/budget.
 set -u
 V=$VLLM_ENV
 B=$WORK/vllm_bench.py
@@ -13,16 +13,16 @@ export HF_HOME=$HF_HOME CUDA_VISIBLE_DEVICES=0
 export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 TOKENIZERS_PARALLELISM=false
 NUMA="numactl --physcpubind=32-63 --membind=1"
 for i in $(seq 1 8640); do [ -f $SCRATCH/budall.done ] && break; sleep 10; done
-log "선행 스윕 종료 확인"
+log "waiting for the preceding sweep"
 cd /tmp
 
-# sweep <태그> <모델> <모델크기GiB> <예산들...>
+# sweep <tag> <model> <model size GiB> <budgets...>
 sweep(){ local tag=$1 model=$2 size=$3; shift 3
   for gb in "$@"; do
     local lab=${tag}_${gb}GB
     [ -f $MK/$lab.done ] && { log "skip $lab"; continue; }
     local best=""
-    # m 이 작을수록 가중치를 많이 상주시킨다. 뜨는 것 중 가장 공격적인 값을 고른다.
+    # A smaller offload keeps more weights resident; take the smallest that starts.
     for m in 4 8 14 22 30; do
       local off=$(( size - gb + m ))
       [ $off -ge $size ] && off=$(( size - 1 ))
@@ -30,11 +30,11 @@ sweep(){ local tag=$1 model=$2 size=$3; shift 3
       log "  probe $lab offload=${off}GB (m=$m)"
       if $NUMA timeout 3600 $V/bin/python $B --model "$model" --budget_gib $gb \
            --cpu_offload_gb $off --smoke > $O/${lab}_probe${m}.log 2>&1; then
-        best=$off; log "  -> 채택 offload=${off}GB"; break
+        best=$off; log "  -> using offload=${off}GB"; break
       fi
     done
-    [ -z "$best" ] && { log "  $lab: 띄울 수 있는 설정 없음"; continue; }
-    log ">>> $lab 본측정 (offload=${best}GB)"
+    [ -z "$best" ] && { log "  $lab: no setting starts at this budget"; continue; }
+    log ">>> $lab measuring (offload=${best}GB)"
     $NUMA timeout 28800 $V/bin/python $B --model "$model" --budget_gib $gb \
       --cpu_offload_gb $best --n_sample 10 --warmup 2 \
       --out $O/$lab.jsonl > $O/$lab.log 2>&1 && { touch $MK/$lab.done; echo "$best" > $O/$lab.off; }

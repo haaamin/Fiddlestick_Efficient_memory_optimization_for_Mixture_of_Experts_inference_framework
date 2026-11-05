@@ -1,7 +1,7 @@
 #!/bin/bash
-# beam 스윕 재측정: 1, 2, 4, 8 을 하나의 배치로.
-# 기존 v3_beam_* 은 1,2,8 만 있어 4 가 빠져 있었고, 나중에 4 만 덧붙이면
-# 그 점만 다른 배치가 되어 Fig6 에서 고쳤던 문제를 되풀이하게 된다.
+# Beam width sweep: widths 1, 2, 4 and 8 for Fiddler and Fiddlestick at a
+# 16 GB budget. All four widths are measured in one pass so that the trend is
+# internally consistent. Produces data/ours/v4_beam_{x7b,c22}.
 set -u
 FS=$FS
 DS=$FS/benchmarks/ShareGPT_V3_unfiltered_cleaned_split.json

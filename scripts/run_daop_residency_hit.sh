@@ -1,6 +1,7 @@
 #!/bin/bash
-# DAOP 2차: 원본(전수탐색) 코드로 상주량·적중률 재측정.
-# 1차(daop_orig.sh = 예산 스윕)가 끝난 뒤 이어서 실행한다. Phi 는 논문 제외.
+# DAOP expert cache hit rate on the calibration corpus (ShareGPT) and the
+# held-out corpus (C4), plus its GPU occupancy at a 16 GB budget. Runs after
+# run_daop_budget.sh. Produces data/daop/daop_orig_hit.
 set -u
 D=$DAOP; FS=$FS
 log(){ echo "[$(TZ=Asia/Seoul date '+%F %H:%M:%S')] $*"; }
@@ -17,17 +18,17 @@ import json; d=json.load(open('$FS/calib/$1.json'))
 print(d['cpu_ms_effective'], d['h2d_pageable_ms'])"; }
 X=mistralai/Mixtral-8x7B-v0.1; C=mistralai/Mixtral-8x22B-v0.1
 
-# 1차 스윕 종료 대기 (최대 4시간)
+# Wait for the budget sweep to finish (up to four hours).
 for i in $(seq 1 480); do [ -f $SCRATCH/dorig.done ] && break; sleep 30; done
-[ -f $SCRATCH/dorig.done ] || { log "ABORT: 1차 스윕 미완료"; exit 1; }
+[ -f $SCRATCH/dorig.done ] || { log "ABORT: the budget sweep has not finished"; exit 1; }
 
 n=$(grep -c "for config in range(1 << self.n_expert)" $D/model/modeling_daop.py)
-[ "$n" = "2" ] || { log "ABORT: 전수탐색 블록 $n 개"; exit 1; }
-log "전수탐색 복원 확인 OK — 2차 시작"
+[ "$n" = "2" ] || { log "ABORT: found $n brute-force blocks, expected 2"; exit 1; }
+log "brute-force partition verified"
 
 cd $D; export PYTHONPATH=$D
 
-log "########## DAOP 실사용 상주량 @16GB ##########"
+log "########## DAOP GPU occupancy at 16 GB ##########"
 dact(){ local lab=$1 model=$2 cal=$3
   [ -f $MK/m_$lab.done ] && { log "skip m_$lab"; return 0; }
   read LC LG < <(ck $cal)
@@ -41,7 +42,7 @@ dact(){ local lab=$1 model=$2 cal=$3
 dact x7b "$X" d34_32
 dact c22 "$C" d34_22b_32
 
-log "########## DAOP 적중률 (ShareGPT / C4) ##########"
+log "########## DAOP hit rate (ShareGPT / C4) ##########"
 hit(){ local lab=$1 model=$2 cal=$3 ds=$4
   [ -f $MK/h_$lab.done ] && { log "skip h_$lab"; return 0; }
   read LC LG < <(ck $cal)

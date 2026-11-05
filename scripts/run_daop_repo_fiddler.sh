@@ -1,7 +1,8 @@
 #!/bin/bash
-# DAOP 3차: DAOP 저장소에 동봉된 Fiddler 구현을 통일 조건(16GB, 12셀, n=10)에서 측정.
-# DAOP 의 절대 처리량을 우리 Fiddler 와 직접 비교할 때, 두 저장소의 Fiddler 구현
-# 성능 차이가 섞이는지 확인하기 위한 것이다. 원본 전수탐색 코드 상태에서 실행한다.
+# The Fiddler implementation bundled in the DAOP repository, measured under the
+# same conditions as everything else (16 GB, twelve cells, ten samples). DAOP
+# is built on this copy, so its throughput is the baseline against which DAOP's
+# own contribution should be read. Produces data/daop/daop_orig_fdrepo.
 set -u
 D=$DAOP; FS=$FS
 log(){ echo "[$(TZ=Asia/Seoul date '+%F %H:%M:%S')] $*"; }
@@ -18,10 +19,10 @@ print(d['cpu_ms_effective'], d['h2d_pageable_ms'])"; }
 X=mistralai/Mixtral-8x7B-v0.1; C=mistralai/Mixtral-8x22B-v0.1
 
 for i in $(seq 1 960); do [ -f $SCRATCH/dorig2.done ] && break; sleep 30; done
-[ -f $SCRATCH/dorig2.done ] || { log "ABORT: 2차 미완료"; exit 1; }
+[ -f $SCRATCH/dorig2.done ] || { log "ABORT: the hit-rate run has not finished"; exit 1; }
 n=$(grep -c "for config in range(1 << self.n_expert)" $D/model/modeling_fiddler.py)
-[ "$n" = "2" ] || { log "ABORT: modeling_fiddler 전수탐색 $n 개"; exit 1; }
-log "3차 시작 (DAOP 저장소 Fiddler)"
+[ "$n" = "2" ] || { log "ABORT: modeling_fiddler has $n brute-force blocks, expected 2"; exit 1; }
+log "measuring the Fiddler bundled with DAOP"
 
 cd $D; export PYTHONPATH=$D
 run(){ local lab=$1 model=$2 cal=$3

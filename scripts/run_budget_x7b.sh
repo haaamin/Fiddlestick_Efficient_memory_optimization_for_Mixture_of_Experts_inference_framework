@@ -1,7 +1,6 @@
 #!/bin/bash
-# 8x7B 예산 스윕 재측정: 8/16/24/32/40GB 를 하나의 배치로.
-# 기존 Fig6 의 8x7B 곡선은 16~40GB(uni2, 10-22)와 8GB(v3, 10-26)가 섞여 있었다.
-# uni2_x7b_8GB 의 Fiddlestick 이 0.431 tok/s 로 오염되어 그 점만 재측정했던 탓이다.
+# VRAM budget sweep for Mixtral-8x7B: 8, 16, 24, 32 and 40 GB for Fiddler and
+# Fiddlestick, all five measured in one pass. Produces data/ours/v5_x7b_*GB.
 set -u
 FS=$FS
 DS=$FS/benchmarks/ShareGPT_V3_unfiltered_cleaned_split.json

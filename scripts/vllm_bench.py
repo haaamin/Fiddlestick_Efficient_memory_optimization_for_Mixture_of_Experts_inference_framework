@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
-"""vLLM 을 우리 통일 조건에 맞춰 측정 (R1-2 대응).
-   예산은 gpu_memory_utilization, 가중치 오프로드는 cpu_offload_gb 로 건다.
-   vLLM V1 은 워커를 spawn 하므로 모든 실행 코드는 main() 안에 둔다."""
+"""Measure vLLM under the same conditions as the other systems.
+   The budget is imposed with gpu_memory_utilization and weight offloading
+   with cpu_offload_gb. vLLM V1 spawns its workers, so everything executable
+lives inside main()."""
 import argparse, json, os, time, random, subprocess, threading
 
 
 class GpuPeak:
-    """nvidia-smi 를 폴링해 GPU 실사용량 최대치를 잰다 (vLLM V1 은 워커에서 돌아
-       부모 프로세스의 torch.cuda 계측이 0 으로 나오기 때문)."""
+    """Poll nvidia-smi for the peak GPU usage. vLLM V1 runs in a worker process,
+       so torch.cuda instrumentation in the parent reports zero."""
 
     def __init__(self, hz=10.0):
         self.period, self.peak, self._stop = 1.0 / hz, 0, threading.Event()
@@ -60,7 +61,7 @@ def main():
 
     total_gib = torch.cuda.get_device_properties(0).total_memory / 1024**3
     util = a.budget_gib / total_gib
-    print(f"[cfg] GPU {total_gib:.1f} GiB -> 예산 {a.budget_gib} GiB "
+    print(f"[cfg] GPU {total_gib:.1f} GiB -> budget {a.budget_gib} GiB "
           f"(gpu_memory_utilization={util:.4f}), cpu_offload_gb={a.cpu_offload_gb}", flush=True)
 
     t0 = time.time()
@@ -75,7 +76,7 @@ def main():
         data = json.load(f)
     texts = [" ".join(d["conversations"][0]["value"].split())
              for d in data if d["conversations"]]
-    random.seed(0); random.shuffle(texts)   # run_bench.py 와 동일한 샘플 순서
+    random.seed(0); random.shuffle(texts)   # same sample order as run_bench.py
 
     def prompts(nin, k):
         out, i = [], 0
@@ -101,13 +102,13 @@ def main():
             for nout in [int(x) for x in a.output_tokens.split(",")]:
                 sp = SamplingParams(temperature=0, max_tokens=nout,
                                     min_tokens=nout, ignore_eos=True)
-                for p in prompts(nin, a.warmup):    # 워밍업은 계측 제외
+                for p in prompts(nin, a.warmup):    # warm-up, not measured
                     llm.generate([p], sp, use_tqdm=False)
                 ps = prompts(nin, a.n_sample)
                 with GpuPeak() as gp:
                     t = time.time()
                     for p in ps:
-                        llm.generate([p], sp, use_tqdm=False)  # 1건씩 (연속배칭 배제)
+                        llm.generate([p], sp, use_tqdm=False)  # one at a time, no continuous batching
                     wall = time.time() - t
                 rec = {"record": "agg", "system": "vllm", "input_token": nin,
                        "output_token": nout, "n_sample": len(ps),

@@ -1,6 +1,8 @@
 #!/bin/bash
-# 메모리 측정 기준 통일: 모든 시스템을 cudaMemGetInfo(total-free) 기준으로 다시 잰다.
-# 기존 init_peak_mib(torch 할당분만)와 vLLM 보고값(컨텍스트 포함)은 축이 달랐다.
+# Minimum GPU residency for every system on one basis. The expert cache is
+# forced to zero and the GPU memory the process occupies is read from
+# cudaMemGetInfo as total minus free, which includes the CUDA context and
+# allocations that bypass the PyTorch allocator. Produces data/ours/residency.
 set -u
 FS=$FS; D=$DAOP
 DS=$FS/benchmarks/ShareGPT_V3_unfiltered_cleaned_split.json
@@ -17,7 +19,7 @@ import json; d=json.load(open('$FS/calib/$1.json'))
 print(d['cpu_ms_effective'], d['h2d_pageable_ms'])"; }
 pg(){ $FS/venv/bin/python -c "print(f'{16*1024/81079*0.95:.4f}')"; }
 
-log "########## 우리 시스템 (expert 0개 강제) ##########"
+log "########## Fiddler and Fiddlestick, cache forced to zero ##########"
 ours(){ local lab=$1 sys=$2 model=$3 cal=$4 pop=$5
   [ -f $MK/$lab.done ] && { log "skip $lab"; return 0; }
   read LC LG < <(ck $cal); cd $FS
@@ -43,7 +45,7 @@ ours phi_fs fiddlestick_phi "$P" d34_phi_32 popularity_phimoe.json
 ours c22_fd fiddler         "$C" d34_22b_32 popularity_8x22b.json
 ours c22_fs fiddlestick     "$C" d34_22b_32 popularity_8x22b.json
 
-log "########## DAOP (캐시 0개) ##########"
+log "########## DAOP, cache forced to zero ##########"
 cd $D; export PYTHONPATH=$D
 dres(){ local lab=$1 model=$2 cal=$3
   [ -f $MK/d_$lab.done ] && { log "skip d_$lab"; return 0; }
@@ -58,5 +60,5 @@ dres(){ local lab=$1 model=$2 cal=$3
 dres x7b "$X" d34_32
 dres phi $PHI_MODEL d34_phi_32
 dres c22 "$C" d34_22b_32
-log "########## 통일 측정 DONE ##########"
+log "########## done ##########"
 touch $SCRATCH/memu.done

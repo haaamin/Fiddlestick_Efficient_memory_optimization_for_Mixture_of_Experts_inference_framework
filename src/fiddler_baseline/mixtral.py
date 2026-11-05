@@ -12,8 +12,9 @@ import transformers
 
 
 def _load_tokenizer(name):
-    """Mixtral-8x22B 의 tokenizer.json 은 tokenizers 0.15(=transformers 4.36 요구
-    버전)가 파싱하지 못한다. fast 실패 시 sentencepiece 기반 slow 로 폴백."""
+    """tokenizers 0.15, which transformers 4.36 requires, cannot parse the
+    tokenizer.json shipped with Mixtral-8x22B. Fall back to the slow,
+    sentencepiece-based tokenizer when the fast one fails."""
     import transformers as _tf
     try:
         return _tf.AutoTokenizer.from_pretrained(name)
@@ -35,11 +36,12 @@ class FiddlerMixtral:
         )
         self.lm_head = self.model.lm_head
         self.model = self.model.model
-        # FS_PIN_BASELINE=1 이면 Fiddlestick 의 pin_memory_model() 과 동일하게
-        # 모델 전체(expert 포함)를 pinned 로 바꾼다. 기본 0 = 원본 Fiddler 동작.
-        # 원본 Fiddler 는 pinning 이 없어 expert 전송(load_state_dict)이 pageable 이라
-        # Fiddlestick(6.19ms) 대비 2.5배 느리다(15.38ms). 설계 기여와 무관한
-        # 비대칭이므로, 이 플래그로 전송 비용을 맞춘 공정 비교를 할 수 있다.
+        # FS_PIN_BASELINE=1 pins the whole model, experts included, the way
+        # Fiddlestick's pin_memory_model() does. The default 0 is Fiddler's own
+        # behaviour: it does not pin, so its expert transfers go through pageable
+        # memory and take 15.38 ms against Fiddlestick's 6.19 ms. That gap is an
+        # artefact of pinning rather than of either design; this flag equalises it.
+        # Results measured with it are not reported in the paper.
         if os.environ.get("FS_PIN_BASELINE", "0") == "1":
             for _p in self.model.parameters():
                 _p.data = _p.data.pin_memory()
@@ -58,7 +60,7 @@ class FiddlerMixtral:
        
 
         # TODO: find this value based on device config
-        # 기본값은 원본 그대로(7/70). FS_LATENCY_* 가 있을 때만 덮어쓴다.
+        # Defaults are Fiddler's own (7/70); FS_LATENCY_* overrides them when set.
         self.latency_cpu = float(os.environ.get("FS_LATENCY_CPU", "7"))
         self.latency_gpu = float(os.environ.get("FS_LATENCY_GPU", "70"))
 
@@ -70,8 +72,9 @@ class FiddlerMixtral:
         # 0: CPU, 1: GPU
         self.expert_loc = np.zeros((self.n_layer, self.n_expert), dtype=int)
         n_expert_on_gpu = self.calc_n_expert_on_gpu() - 1
-        # FS_FORCE_EXPERTS: 캐시할 expert 수를 강제 (기본 = 위 계산값 그대로).
-        # 0 으로 두면 non-expert 만 상주한 상태의 peak 를 잴 수 있다.
+        # FS_FORCE_EXPERTS fixes how many experts to cache; the default is the
+        # count computed above. Setting it to 0 leaves only the non-expert layers
+        # resident, which is how the memory floor in the paper is measured.
         _force = os.environ.get("FS_FORCE_EXPERTS")
         if _force is not None:
             n_expert_on_gpu = max(0, int(_force))
@@ -101,9 +104,9 @@ class FiddlerMixtral:
     def set_expert_loc(self, n_expert_on_gpu, popular_experts=None):
         """Set the location of experts"""
         if popular_experts is None:
-            # FS_POPULARITY_JSON: profile_popularity.py 가 만든 랭킹을 쓴다.
-            # 8x22B 는 56x8=448 experts 라 아래 하드코딩 리스트(8x7B 전용, 256개)로는
-            # 캐시 배치 자체가 불가능하므로 이 경로가 필수다.
+            # FS_POPULARITY_JSON supplies the ranking from profile_popularity.py.
+            # It is required for 8x22B, which has 56x8=448 experts: the hard-coded
+            # list below holds 256 entries and covers 8x7B only.
             _pop = os.environ.get("FS_POPULARITY_JSON")
             if _pop:
                 import json as _json
@@ -396,9 +399,11 @@ class FiddlerMixtral:
         )
         # get the amount of free memory on GPU
         total_mem = torch.cuda.get_device_properties(self.dev).total_memory * self.mem_percent
-        # FS_KV_RESERVE: KV 캐시/활성화용으로 미리 떼어둘 용량(GiB). 기본 0 = 원본 동작.
-        # 예산을 expert 로 꽉 채우면 긴 입력에서 KV 할당이 실패한다
-        # (set_per_process_memory_fraction 로 하드 상한이 걸려 있어 물리 여유와 무관).
+        # FS_KV_RESERVE holds back this many GiB for the key-value cache and
+        # activations; 0, the default, is Fiddler's behaviour. Filling the budget
+        # entirely with experts makes the KV allocation fail on long inputs,
+        # because set_per_process_memory_fraction caps the allocator whatever
+        # physical memory is free.
         _kv_reserve = float(os.environ.get("FS_KV_RESERVE", "0")) * (1024 ** 3)
         free_mem = total_mem * 0.95 - torch.cuda.memory_allocated(self.dev) - _kv_reserve
         return int((free_mem) // (n_param * 2))

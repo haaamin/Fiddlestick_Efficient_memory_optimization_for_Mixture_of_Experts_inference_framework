@@ -1,6 +1,9 @@
 #!/bin/bash
-# held-out 실험: (1) C4 데이터로 4종 비교  (2) 다른 데이터셋 프로파일 랭킹 전이
-# 조건은 통일 격자와 동일: 16GB / 32코어 node1 / beam=1 / n=10 / 입력16,32,64 x 출력2,4,8,16
+# Held-out evaluation: the expert placement is computed from ShareGPT and held
+# fixed while the evaluation corpus is changed to C4. Conditions match the rest
+# of the evaluation: 16 GB, 32 pinned cores, greedy decoding, ten samples,
+# inputs 16/32/64 crossed with outputs 2/4/8/16.
+# Produces data/ours/{c4_b1_n10,c4_c22}.
 set -u
 FS=$FS
 D=$DAOP
@@ -15,7 +18,7 @@ LC=$($FS/venv/bin/python -c "import json;print(json.load(open('$FS/calib/d34_32.
 LG=$($FS/venv/bin/python -c "import json;print(json.load(open('$FS/calib/d34_32.json'))['fiddler']['latency_gpu'])")
 NUMA="numactl --physcpubind=32-63 --membind=1"
 
-# ---------- 공통: 우리 하네스 1회 실행 ----------
+# ---------- one run of the harness ----------
 ours(){ local dir=$1 sys=$2 ds=$3 pop=$4
   mkdir -p $dir
   [ -f $dir/$sys.done ] && { log "skip $dir/$sys"; return; }
@@ -30,7 +33,7 @@ ours(){ local dir=$1 sys=$2 ds=$3 pop=$4
   log "<<< $dir/$sys exit=$?"
 }
 
-log "########## PHASE 1: C4 (held-out 데이터셋) 4종 ##########"
+log "########## held-out corpus (C4) ##########"
 O1=$FS/results/c4_b1_n10
 ours $O1 fiddlestick $C4 $FS/popularity_8x7b.json
 ours $O1 fiddler     $C4 $FS/popularity_8x7b.json
@@ -59,12 +62,12 @@ if [ ! -f $OK/kt_c4.done ]; then
 fi
 log "<<< C4/KT exit=$?"
 
-log "########## PHASE 2: 랭킹 전이 (ShareGPT 평가, 프로파일만 교체) ##########"
+log "########## ranking transfer: evaluate on ShareGPT with a ranking built elsewhere ##########"
 SG=$FS/benchmarks/ShareGPT_V3_unfiltered_cleaned_split.json
 for TAG in piqa c4; do
   ours $FS/results/rank_$TAG fiddlestick $SG $FS/popularity_8x7b_$TAG.json
   ours $FS/results/rank_$TAG fiddler     $SG $FS/popularity_8x7b_$TAG.json
 done
 
-log "########## 전체 DONE ##########"
+log "########## done ##########"
 touch $SCRATCH/heldout.done

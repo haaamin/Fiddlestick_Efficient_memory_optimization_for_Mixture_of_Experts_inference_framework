@@ -1,7 +1,8 @@
 #!/bin/bash
-# prewarm 은 무관함이 대조로 확인됐다(0.44~0.51s, 네 조건 모두 정상).
-# 10-23 재측정분의 prefill 6.9초는 그 시점의 일시적 시스템 상태로 추정된다.
-# -> 조용한 지금, Fiddler/Fiddlestick 을 같은 시간대에 쌍으로 다시 측정한다.
+# Throughput at a 16 GB budget and across budgets for Fiddler and Fiddlestick.
+# The two systems are always measured as a pair in the same session so that
+# machine conditions cannot differ between them.
+# Produces data/ours/{final_b1_n10,v3_c22_*GB}.
 set -u
 FS=$FS
 DS=$FS/benchmarks/ShareGPT_V3_unfiltered_cleaned_split.json
@@ -17,7 +18,7 @@ consts(){ ./venv/bin/python -c "
 import json; d=json.load(open('calib/$1.json'))
 print(d['cpu_ms_effective'], d['h2d_pageable_ms'])"; }
 
-# run <디렉토리> <라벨> <시스템> <모델> <calib> <pop> <beams> <mem%>
+# run <dir> <label> <system> <model> <calib> <popularity> <beams> <mem%>
 run(){ local dir=$1 lab=$2 sys=$3 model=$4 ck=$5 pop=$6 beams=$7 mp=$8
   local mk=$(echo "${dir##*/}_$lab" | tr '/' '_')
   [ -f $MK/$mk.done ] && { log "skip $mk"; return 0; }
@@ -37,11 +38,11 @@ for ln in open('$dir/$lab.jsonl'):
     r=json.loads(ln)
     if r.get('record')=='sample': a[(r['input_token'],r['output_token'])].append(r['prefill_time'])
 v=[st.mean(x) for x in a.values()]
-print(f'    prefill 평균 {st.mean(v):.3f}s (최대셀 {max(v):.3f}s)  <- 6.9s 면 오염 재발')"
+print(f'    mean prefill {st.mean(v):.3f}s (slowest cell {max(v):.3f}s)')"
 }
 X=mistralai/Mixtral-8x7B-v0.1; C=mistralai/Mixtral-8x22B-v0.1
 
-log "########## 8x7B (빠름, 가설 검증) ##########"
+log "########## Mixtral-8x7B ##########"
 D=$FS/results/v3_x7b_8GB;  run $D fiddler fiddler "$X" d34_32 popularity_8x7b.json 1 $(pct 8)
                            run $D fiddlestick fiddlestick "$X" d34_32 popularity_8x7b.json 1 $(pct 8)
 D=$FS/results/v3_beam_x7b; run $D fiddler fiddler "$X" d34_32 popularity_8x7b.json 1,2,8 $(pct 16)

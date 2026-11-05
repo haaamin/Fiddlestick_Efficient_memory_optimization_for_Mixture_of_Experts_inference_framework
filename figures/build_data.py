@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-"""data/ 의 원자료에서 그림 입력(figures/data/*.json)을 만든다.
+"""Build the figure input (figures/data/paper_data.json) from data/.
 
-그림과 원자료의 대응은 README.md 의 표를 따른다. 이 스크립트와 make_figures.py
-두 개만 돌리면 논문의 Fig3~Fig9 가 그대로 재생성된다.
+Which measurements belong to which figure is listed in the table in
+README.md. Running this script and then make_figures.py regenerates Fig 3 to
+Fig 9 of the paper.
 """
 import collections, glob, json, os, re, statistics as st
 
@@ -11,7 +12,7 @@ D = os.path.join(ROOT, "data")
 MODELS = ("x7b", "c22")
 N_EXPERT = {"x7b": 256, "c22": 448}
 BUDGETS = (8, 16, 24, 32, 40)
-OURS = {                      # 모델별 (16GB 기준 실행, held-out 실행) 디렉토리
+OURS = {                      # per model: the 16 GB run, the held-out run, the beam sweep
     "x7b": {"sharegpt": "final_b1_n10", "c4": "c4_b1_n10", "beam": "v4_beam_x7b"},
     "c22": {"sharegpt": "v3_c22_16GB",  "c4": "c4_c22",    "beam": "v4_beam_c22"},
 }
@@ -19,7 +20,7 @@ BUDGET_DIR = {"x7b": "v5_x7b_{g}GB", "c22": "v3_c22_{g}GB"}
 
 
 def _samples(path, beam=1):
-    """run_bench.py 가 남긴 jsonl 에서 셀별 처리량·지연·적중률을 모은다."""
+    """Collect per-cell throughput, latency and hit rate from a run_bench.py jsonl."""
     if not os.path.exists(path):
         return None
     tp = collections.defaultdict(list)
@@ -55,7 +56,7 @@ def _samples(path, beam=1):
 
 
 def _meta(path):
-    """meta 레코드만 읽는다. 상주량은 cudaMemGetInfo 기준(cuda_used_mib)을 쓴다."""
+    """Read the meta record. Residency uses cuda_used_mib, the cudaMemGetInfo basis."""
     if not os.path.exists(path):
         return None
     for line in open(path):
@@ -66,7 +67,7 @@ def _meta(path):
 
 
 def _daop_log(path):
-    """DAOP 는 stdout 로그만 남기므로 거기서 긁는다."""
+    """DAOP only writes to stdout, so its numbers are parsed out of the log."""
     if not os.path.exists(path):
         return None
     cells, cur, peak, cuda, hit, nexp = {}, None, None, None, None, None
@@ -141,18 +142,18 @@ def main():
                 e["vLLM"] = v
             if e:
                 out["budget"]["%s|%d" % (m, g)] = e
-        # 상주 하한: expert 캐시를 0 으로 강제한 실행의 프로세스 GPU 점유량
+        # Residency floor: GPU memory occupied with the expert cache forced to zero.
         r = {}
         for k, s in (("Fiddler", "fd"), ("Fiddlestick", "fs")):
             meta = _meta("%s/ours/residency/%s_%s.jsonl" % (D, m, s))
             if meta:
-                assert meta.get("n_expert_on_gpu") == 0, "캐시가 0 인 실행이어야 한다"
+                assert meta.get("n_expert_on_gpu") == 0, "expected a run with an empty cache"
                 r[k] = meta["cuda_used_mib"]
         v = _daop_log("%s/daop/daop_orig_floor/%s.log" % (D, m))
         if v:
             r["DAOP"] = v["cuda"] or v["peak"]
         out["residency"][m] = r
-        # 적중률: 보정 코퍼스와 held-out 코퍼스
+        # Hit rate on the calibration corpus and on the held-out corpus.
         out["hit"][m] = {}
         for corpus, key in (("ShareGPT", "sharegpt"), ("C4", "c4")):
             e = {}

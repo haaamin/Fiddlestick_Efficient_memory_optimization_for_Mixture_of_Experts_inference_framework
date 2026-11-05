@@ -60,7 +60,7 @@ if __name__ == "__main__":
     # resolve relative to this file, not the cwd: the sweep driver runs from the
     # repo root while the original latency.py ran from benchmarks/
     _HERE = os.path.dirname(os.path.abspath(__file__))
-    # Mixtral 은 src/src_hamin, Phi-3.5-MoE 이식본은 src_phi/src_hamin_phi
+    # Mixtral lives in src/ and src_hamin/.
     _SRC = {"fiddler": "src", "fiddlestick": "src_hamin",
             "fiddler_phi": "src_phi", "fiddlestick_phi": "src_hamin_phi"}
     sys.path.append(os.path.join(_HERE, "..", _SRC[args.system]))
@@ -85,8 +85,9 @@ if __name__ == "__main__":
     torch.cuda.reset_peak_memory_stats(0)
     model = FiddlerMixtral(args)
     init_peak = torch.cuda.max_memory_allocated(0)
-    # cuda_used_mib: 프로세스가 실제로 점유한 GPU 메모리(= total - free).
-    # CUDA 컨텍스트와 비-torch 할당을 포함하므로 vLLM 보고값과 같은 축이다.
+    # cuda_used_mib is the GPU memory the process occupies, total minus free.
+    # It includes the CUDA context and allocations that bypass the PyTorch
+    # allocator, putting it on the same basis as what vLLM reports.
     _tot_free, _tot_all = torch.cuda.mem_get_info(0)
     cuda_used = _tot_all - _tot_free
 
