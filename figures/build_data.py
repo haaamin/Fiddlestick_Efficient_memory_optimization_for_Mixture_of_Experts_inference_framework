@@ -145,11 +145,11 @@ def main():
             # that reads as "throughput at this budget".
             if v and v.get("cells"):
                 if len(v["cells"]) < len(CELLS):
-                    # Incomplete run. The 8 GB point on 8x22B is the one case:
-                    # DAOP starts there with no expert cached and 13221 MiB
-                    # resident, 1.6x the budget, and the run hit its time limit
-                    # after 10 cells. The log is kept as evidence of that
-                    # behaviour; its throughput is not a budget data point.
+                    # Incomplete run: a budget point is only meaningful when
+                    # every cell of the grid was measured, so a short log is
+                    # dropped rather than averaged over whatever it reached.
+                    # No log is in this state now; the guard stays so that an
+                    # interrupted rerun cannot quietly change a figure.
                     print("  skip DAOP %s %dGB: %d of %d cells"
                           % (m, g, len(v["cells"]), len(CELLS)))
                 else:

@@ -53,14 +53,15 @@ mixes batches taken on different days.
 The three systems behave differently and the logs record each outcome.
 Fiddler enforces the budget and `data/ours/v3_c22_8GB/fiddler.log` ends in a
 `torch.cuda.OutOfMemoryError`. DAOP does not enforce it: `data/daop/daop_orig/`
-`c22_8GB.log` shows it starting with no expert cached, `HIT_RATE 0.0000
-(0/17920)`, while occupying 13221 MiB, 1.6 times the budget it was given.
+`c22_8GB.log` shows it starting with no expert cached, `HIT_RATE 0.0000`,
+while occupying 13221 MiB, 1.6 times the budget it was given.
 Fiddlestick stays inside the budget at 6912 MiB with 9 experts cached.
 
-That DAOP log stops after 10 of the 12 cells because the run hit its time
-limit. It is kept for the occupancy and cache-size evidence, which the first
-cells already establish; its throughput is not used in any figure, and the 8 GB
-point is absent from Fig 6 for both Fiddler and DAOP.
+The first pass of that DAOP run recorded ten of the twelve cells and then
+stopped; the log gives no reason and the remaining two were measured on
+2026-11-06 under the same settings and appended, so the file now carries all
+twelve. Fig 6 therefore has a DAOP point at 8 GB and no Fiddler point, and the
+caption says what each outcome was.
 
 ## Why DAOP is absent from Fig 8 and Fig 9
 
