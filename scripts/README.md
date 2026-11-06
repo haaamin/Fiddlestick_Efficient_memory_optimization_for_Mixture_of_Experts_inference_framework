@@ -29,11 +29,11 @@ The DAOP scripts additionally need `D` pointing at a DAOP checkout with
 |---|---|---|
 | `run_throughput_budget.sh` | `data/ours/{final_b1_n10,v3_c22_*GB}` | Fig 3, 4, 6, 8 |
 | `run_budget_x7b.sh` | `data/ours/v5_x7b_*GB` | Fig 6 |
-| `run_beam.sh` | `data/ours/v4_beam_{x7b,c22}` | Fig 7 |
-| `run_residency.sh` | `data/ours/residency` | Fig 5 |
+| `run_beam.sh` | `data/ours/v4_beam_{x7b,c22}` | Fig 5 |
+| `run_residency.sh` | `data/ours/residency` | Fig 7 |
 | `run_heldout.sh` | `data/ours/{c4_b1_n10,c4_c22}` | Fig 9 |
 | `run_daop_budget.sh` | `data/daop/daop_orig` | Fig 3, 6 |
-| `run_daop_floor.sh` | `data/daop/daop_orig_floor` | Fig 5 |
+| `run_daop_floor.sh` | `data/daop/daop_orig_floor` | Fig 7 |
 | `run_daop_repo_fiddler.sh` | `data/daop/daop_orig_fdrepo` | text only |
 | `run_daop_residency_hit.sh` | `data/daop/daop_orig_hit` | not used in any figure |
 | `run_vllm.sh`, `vllm_bench.py` | `data/vllm/*` | Fig 3, 6 |

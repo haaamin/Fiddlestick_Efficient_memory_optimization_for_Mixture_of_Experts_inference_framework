@@ -11,6 +11,16 @@ MARK="${MARK:-$ROOT/.done}"                      # completion markers, so reruns
 DS="${DS:-$ROOT/benchmarks/ShareGPT_V3_unfiltered_cleaned_split.json}"
 PY="${PY:-python}"                               # interpreter with the deps installed
 BENCH="${BENCH:-$ROOT/benchmarks/run_bench.py}"
+MK="${MK:-$MARK}"                                # some scripts use the short name
+
+# The comparison systems live outside this repository, so their locations have
+# to be given. D is a DAOP checkout with patches/daop_instrumentation.patch
+# applied (see patches/README.md); V is a virtualenv with vLLM installed.
+D="${D:-$ROOT/../DAOP}"                          # DAOP checkout
+V="${V:-$ROOT/../vllm-venv}"                     # virtualenv holding vLLM
+B="${B:-$ROOT/scripts/vllm_bench.py}"            # vLLM benchmark driver
+O="${O:-$OUT/vllm/budget}"                       # where the vLLM sweep writes
+mkdir -p "$O"
 
 # CPU pinning. Set NUMA="" to run without it.
 NUMA="${NUMA:-numactl --physcpubind=32-63 --membind=1}"

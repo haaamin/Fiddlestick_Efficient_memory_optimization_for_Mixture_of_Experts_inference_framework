@@ -39,9 +39,9 @@ writes are byte-identical to the ones in the paper.
 |---|---|---|
 | Fig 3 | Throughput at a 16 GB budget | `data/ours/{final_b1_n10,v3_c22_16GB}`, `data/daop/daop_orig/*_16GB.log`, `data/vllm/budget/*_16GB.jsonl` |
 | Fig 4 | Prefill and per-token decode latency | same runs as Fig 3 (per-sample `prefill_time` / `decode_time`) |
-| Fig 5 | Minimum GPU residency, expert cache forced to zero | `data/ours/residency`, `data/daop/daop_orig_floor` |
+| Fig 5 | Throughput gain against beam width | `data/ours/v4_beam_{x7b,c22}` |
 | Fig 6 | Throughput against the VRAM budget | `data/ours/{v5_x7b_*GB,v3_c22_*GB}`, `data/daop/daop_orig`, `data/vllm/budget` |
-| Fig 7 | Throughput gain against beam width | `data/ours/v4_beam_{x7b,c22}` |
+| Fig 7 | Minimum GPU residency, expert cache forced to zero | `data/ours/residency`, `data/daop/daop_orig_floor` |
 | Fig 8 | Expert cache hit rate on the calibration corpus | `data/ours/{final_b1_n10,v3_c22_16GB}` |
 | Fig 9 | Hit rate on a held-out corpus | `data/ours/{c4_b1_n10,c4_c22}` |
 

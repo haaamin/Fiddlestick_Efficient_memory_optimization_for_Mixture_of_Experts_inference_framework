@@ -6,8 +6,9 @@
 set -u
 . "$(dirname "$0")/env.sh"
 MK=$MARK; mkdir -p $MK
-O=$OUT/ours/mem_unified; mkdir -p $O
-OD=$OUT/daop/daop_memu; mkdir -p $OD
+# build_data.py reads these two directories by name; keep them in step.
+O=$OUT/ours/residency; mkdir -p $O
+OD=$OUT/daop/daop_orig_floor; mkdir -p $OD
 pg(){ "$PY" -c "print(f'{16*1024/81079*0.95:.4f}')"; }
 
 log "########## Fiddler and Fiddlestick, cache forced to zero ##########"
@@ -22,10 +23,11 @@ ours(){ local lab=$1 sys=$2 model=$3 cal=$4 pop=$5
     --input_tokens 16 --output_tokens 2 --dataset $DS \
     --out $O/$lab.jsonl > $O/$lab.log 2>&1 && touch $MK/$lab.done
   "$PY" -c "
+import json
 for ln in open('$O/$lab.jsonl'):
     r=json.loads(ln)
     if r.get('record')=='meta':
-        print(f\"    nexp={r.get('n_expert_on_gpu')}  torch_peak={r.get('init_peak_mib')} MiB  cuda_used={r.get('cuda_used_mib')} MiB\"); break" 2>/dev/null
+        print(f\"    nexp={r.get('n_expert_on_gpu')}  torch_peak={r.get('init_peak_mib')} MiB  cuda_used={r.get('cuda_used_mib')} MiB\"); break"
 }
 X=mistralai/Mixtral-8x7B-v0.1; C=mistralai/Mixtral-8x22B-v0.1; P=$MARK
 ours x7b_fd fiddler         "$X" d34_32     $POP/popularity_8x7b.json
