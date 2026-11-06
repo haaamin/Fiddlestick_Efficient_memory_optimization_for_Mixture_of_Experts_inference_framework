@@ -6,7 +6,6 @@
 # Produces data/daop/daop_orig.
 set -u
 . "$(dirname "$0")/env.sh"
-export HF_HOME=$HF_HOME CUDA_VISIBLE_DEVICES=0
 MK=$MARK; mkdir -p $MK
 OD=$OUT/daop/daop_orig; mkdir -p $OD
 pg(){ "$PY" -c "print(f'{$1*1024/81079*0.95:.4f}')"; }
@@ -19,7 +18,7 @@ log "brute-force partition verified"
 
 cd $D; export PYTHONPATH=$D
 dsweep(){ local tag=$1 model=$2 cal=$3; shift 3
-  read LC LG < <(ck $cal)
+  read LC LG < <(consts $cal)
   for gb in "$@"; do
     local lab=${tag}_${gb}GB
     [ -f $MK/$lab.done ] && { log "skip $lab"; continue; }

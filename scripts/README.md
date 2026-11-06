@@ -7,6 +7,11 @@ picks the results up without further configuration.
 Every script sources `env.sh`, which resolves paths relative to this
 repository and can be overridden from the environment:
 
+Checked by running each script with the measurement command stubbed out, so
+that the paths, the calibration lookups and the per-budget arithmetic are
+exercised without a GPU. `bash -n` alone does not catch an undefined function
+or a variable that resolves to the wrong path.
+
 | Variable | Default | What it is |
 |---|---|---|
 | `PY` | `python` | interpreter with the dependencies installed |

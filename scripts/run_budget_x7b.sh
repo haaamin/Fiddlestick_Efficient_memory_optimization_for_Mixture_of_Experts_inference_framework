@@ -4,7 +4,7 @@
 set -u
 . "$(dirname "$0")/env.sh"
 MK=$MARK; mkdir -p $MK
-read LC LG < <(consts)
+read LC LG < <(consts d34_32)
 X=mistralai/Mixtral-8x7B-v0.1
 for g in 8 16 24 32 40; do
   D=$OUT/ours/v5_x7b_${g}GB; mkdir -p $D

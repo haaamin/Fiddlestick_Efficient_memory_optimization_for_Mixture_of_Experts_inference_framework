@@ -5,7 +5,6 @@
 # own contribution should be read. Produces data/daop/daop_orig_fdrepo.
 set -u
 . "$(dirname "$0")/env.sh"
-export HF_HOME=$HF_HOME CUDA_VISIBLE_DEVICES=0
 MK=$MARK; mkdir -p $MK
 O=$OUT/daop/daop_orig_fdrepo; mkdir -p $O
 pg(){ "$PY" -c "print(f'{16*1024/81079*0.95:.4f}')"; }
@@ -20,7 +19,7 @@ log "measuring the Fiddler bundled with DAOP"
 cd $D; export PYTHONPATH=$D
 run(){ local lab=$1 model=$2 cal=$3
   [ -f $MK/$lab.done ] && { log "skip $lab"; return 0; }
-  read LC LG < <(ck $cal)
+  read LC LG < <(consts $cal)
   log ">>> $lab"
   FS_LATENCY_CPU=$LC FS_LATENCY_GPU=$LG DAOP_INPUTS=16,32,64 DAOP_OUTPUTS=2,4,8,16 \
   $NUMA timeout 28800 "$PY" fiddler/fiddler_infer.py \

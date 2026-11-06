@@ -5,7 +5,6 @@
 # allocations that bypass the PyTorch allocator. Produces data/ours/residency.
 set -u
 . "$(dirname "$0")/env.sh"
-export HF_HOME=$HF_HOME CUDA_VISIBLE_DEVICES=0
 MK=$MARK; mkdir -p $MK
 O=$OUT/ours/mem_unified; mkdir -p $O
 OD=$OUT/daop/daop_memu; mkdir -p $OD
@@ -14,16 +13,15 @@ pg(){ "$PY" -c "print(f'{16*1024/81079*0.95:.4f}')"; }
 log "########## Fiddler and Fiddlestick, cache forced to zero ##########"
 ours(){ local lab=$1 sys=$2 model=$3 cal=$4 pop=$5
   [ -f $MK/$lab.done ] && { log "skip $lab"; return 0; }
-  read LC LG < <(ck $cal); cd $ROOT
+  read LC LG < <(consts $cal); cd $ROOT
   log ">>> $lab"
   FS_FORCE_EXPERTS=0 FS_MEM_PERCENT=0.5052 FS_LATENCY_CPU=$LC FS_LATENCY_GPU=$LG \
-  FS_POPULARITY_JSON=$POP/$pop \
+  FS_POPULARITY_JSON=$pop \
   $NUMA timeout 7200 "$PY" "$BENCH" \
     --system $sys --model "$model" --beam_widths 1 --n_sample 1 \
     --input_tokens 16 --output_tokens 2 --dataset $DS \
     --out $O/$lab.jsonl > $O/$lab.log 2>&1 && touch $MK/$lab.done
   "$PY" -c "
-import json
 for ln in open('$O/$lab.jsonl'):
     r=json.loads(ln)
     if r.get('record')=='meta':
@@ -39,7 +37,7 @@ log "########## DAOP, cache forced to zero ##########"
 cd $D; export PYTHONPATH=$D
 dres(){ local lab=$1 model=$2 cal=$3
   [ -f $MK/d_$lab.done ] && { log "skip d_$lab"; return 0; }
-  read LC LG < <(ck $cal)
+  read LC LG < <(consts $cal)
   log ">>> DAOP $lab"
   FS_LATENCY_CPU=$LC FS_LATENCY_GPU=$LG DAOP_INPUTS=16 DAOP_OUTPUTS=2 \
   $NUMA timeout 7200 "$PY" DAOP/daop_infer.py \

@@ -4,7 +4,6 @@
 # the process occupies is recorded. Produces data/daop/daop_orig_floor.
 set -u
 . "$(dirname "$0")/env.sh"
-export HF_HOME=$HF_HOME CUDA_VISIBLE_DEVICES=0
 MK=$MARK; mkdir -p $MK
 O=$OUT/daop/daop_orig_floor; mkdir -p $O
 n=$(grep -c "for config in range(1 << self.n_expert)" $D/model/modeling_daop.py)
@@ -12,7 +11,7 @@ n=$(grep -c "for config in range(1 << self.n_expert)" $D/model/modeling_daop.py)
 cd $D; export PYTHONPATH=$D
 res(){ local lab=$1 model=$2 cal=$3
   [ -f $MK/$lab.done ] && { log "skip $lab"; return; }
-  read LC LG < <(ck $cal)
+  read LC LG < <(consts $cal)
   log ">>> residency $lab"
   FS_LATENCY_CPU=$LC FS_LATENCY_GPU=$LG DAOP_INPUTS=16 DAOP_OUTPUTS=2 \
   $NUMA timeout 7200 "$PY" DAOP/daop_infer.py \

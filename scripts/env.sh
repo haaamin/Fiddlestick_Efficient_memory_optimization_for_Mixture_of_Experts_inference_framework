@@ -15,6 +15,8 @@ BENCH="${BENCH:-$ROOT/benchmarks/run_bench.py}"
 # CPU pinning. Set NUMA="" to run without it.
 NUMA="${NUMA:-numactl --physcpubind=32-63 --membind=1}"
 
+# HF_HOME is passed through when the caller has one; it is not required.
+[ -n "${HF_HOME:-}" ] && export HF_HOME
 export CUDA_VISIBLE_DEVICES="${CUDA_VISIBLE_DEVICES:-0}"
 export HF_HUB_OFFLINE="${HF_HUB_OFFLINE:-1}"
 export TRANSFORMERS_OFFLINE="${TRANSFORMERS_OFFLINE:-1}"

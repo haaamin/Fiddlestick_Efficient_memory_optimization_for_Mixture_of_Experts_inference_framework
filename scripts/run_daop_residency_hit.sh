@@ -4,7 +4,6 @@
 # run_daop_budget.sh. Produces data/daop/daop_orig_hit.
 set -u
 . "$(dirname "$0")/env.sh"
-export HF_HOME=$HF_HOME CUDA_VISIBLE_DEVICES=0
 MK=$MARK; mkdir -p $MK
 OM=$OUT/daop/daop_orig_mem; mkdir -p $OM
 OH=$OUT/daop/daop_orig_hit; mkdir -p $OH
@@ -24,7 +23,7 @@ cd $D; export PYTHONPATH=$D
 log "########## DAOP GPU occupancy at 16 GB ##########"
 dact(){ local lab=$1 model=$2 cal=$3
   [ -f $MK/m_$lab.done ] && { log "skip m_$lab"; return 0; }
-  read LC LG < <(ck $cal)
+  read LC LG < <(consts $cal)
   log ">>> mem $lab"
   FS_LATENCY_CPU=$LC FS_LATENCY_GPU=$LG DAOP_INPUTS=16,64 DAOP_OUTPUTS=2,16 \
   $NUMA timeout 7200 "$PY" DAOP/daop_infer.py \
@@ -38,7 +37,7 @@ dact c22 "$C" d34_22b_32
 log "########## DAOP hit rate (ShareGPT / C4) ##########"
 hit(){ local lab=$1 model=$2 cal=$3 ds=$4
   [ -f $MK/h_$lab.done ] && { log "skip h_$lab"; return 0; }
-  read LC LG < <(ck $cal)
+  read LC LG < <(consts $cal)
   log ">>> hit $lab"
   FS_LATENCY_CPU=$LC FS_LATENCY_GPU=$LG DAOP_INPUTS=16,32,64 DAOP_OUTPUTS=2,4,8,16 \
   $NUMA timeout 28800 "$PY" DAOP/daop_infer.py \

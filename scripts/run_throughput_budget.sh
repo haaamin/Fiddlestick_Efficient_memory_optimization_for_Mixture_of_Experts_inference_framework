@@ -14,20 +14,12 @@ run(){ local dir=$1 lab=$2 sys=$3 model=$4 ck=$5 pop=$6 beams=$7 mp=$8
   mkdir -p $dir
   read LC LG < <(consts $ck)
   log ">>> $mk (load1m=$(cut -d' ' -f1 /proc/loadavg))"
-  FS_MEM_PERCENT=$mp FS_LATENCY_CPU=$LC FS_LATENCY_GPU=$LG FS_POPULARITY_JSON=$POP/$pop \
+  FS_MEM_PERCENT=$mp FS_LATENCY_CPU=$LC FS_LATENCY_GPU=$LG FS_POPULARITY_JSON=$pop \
   $NUMA timeout 28800 "$PY" "$BENCH" \
     --system $sys --model "$model" --beam_widths $beams --n_sample 10 \
     --input_tokens 16,32,64 --output_tokens 2,4,8,16 \
     --dataset $DS --out $dir/$lab.jsonl > $dir/$lab.log 2>&1 && touch $MK/$mk.done
   log "<<< $mk exit=$?"
-  [ -f $dir/$lab.jsonl ] && "$PY" -c "
-import json,collections,statistics as st
-a=collections.defaultdict(list)
-for ln in open('$dir/$lab.jsonl'):
-    r=json.loads(ln)
-    if r.get('record')=='sample': a[(r['input_token'],r['output_token'])].append(r['prefill_time'])
-v=[st.mean(x) for x in a.values()]
-print(f'    mean prefill {st.mean(v):.3f}s (slowest cell {max(v):.3f}s)')"
 }
 X=mistralai/Mixtral-8x7B-v0.1; C=mistralai/Mixtral-8x22B-v0.1
 

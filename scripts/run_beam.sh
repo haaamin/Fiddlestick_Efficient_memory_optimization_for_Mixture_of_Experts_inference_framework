@@ -12,7 +12,7 @@ run(){ local dir=$1 lab=$2 sys=$3 model=$4 ck=$5 pop=$6 beams=$7 mp=$8
   mkdir -p $dir
   read LC LG < <(consts $ck)
   log ">>> $mk (load1m=$(cut -d' ' -f1 /proc/loadavg))"
-  FS_MEM_PERCENT=$mp FS_LATENCY_CPU=$LC FS_LATENCY_GPU=$LG FS_POPULARITY_JSON=$POP/$pop \
+  FS_MEM_PERCENT=$mp FS_LATENCY_CPU=$LC FS_LATENCY_GPU=$LG FS_POPULARITY_JSON=$pop \
   $NUMA timeout 43200 "$PY" "$BENCH" \
     --system $sys --model "$model" --beam_widths $beams --n_sample 10 \
     --input_tokens 16,32,64 --output_tokens 2,4,8,16 \

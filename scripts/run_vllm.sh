@@ -5,7 +5,6 @@
 # which understates what vLLM can do. Produces data/vllm/budget.
 set -u
 . "$(dirname "$0")/env.sh"
-export HF_HOME=$HF_HOME CUDA_VISIBLE_DEVICES=0
 for i in $(seq 1 8640); do [ -f $MARK.done ] && break; sleep 10; done
 log "waiting for the preceding sweep"
 cd /tmp
