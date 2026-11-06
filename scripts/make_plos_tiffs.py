@@ -4,7 +4,12 @@ scripts emit plus the two hand-drawn diagrams kept from the submission.
 
 PLOS requires: TIFF or EPS; RGB 8 bit/channel or grayscale, no alpha;
 LZW compression; flattened, single page; width 789-2250 px and height at
-most 2625 px at 300 dpi; 300-600 dpi; at most 10 MB per file.
+most 2625 px at 300 dpi; 300-600 dpi; at most 10 MB per file. It also asks
+for Arial, Times or Symbol at 8-12 pt in the final size; the charts set
+Arial and are drawn at their printed width, so nothing is resampled and
+the sizes they are authored at are the sizes that print. This script does
+not check the text, only the container, so changing a figure's width in
+make_figures.py means checking the labels again.
 
 File names follow the order the figures appear in, so Fig5.tif is
 Figure 5. Run from anywhere:  python3 scripts/make_plos_tiffs.py

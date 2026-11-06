@@ -9,7 +9,24 @@ Fiddler, DAOP, vLLM). Phi-3.5-MoE and KTransformers are not part of the paper.
 import json, os, statistics as st
 import matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt, numpy as np
-plt.rcParams["font.family"] = "DejaVu Sans"
+import matplotlib.font_manager as fm
+
+# PLOS accepts Arial, Times and Symbol. Matplotlib's default is neither, so
+# register Arial if a copy is reachable and fall back to the default otherwise,
+# which keeps the script runnable on a machine without it.
+for _p in ("/usr/share/fonts/truetype/msttcorefonts/Arial.ttf",
+           "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+           "/mnt/c/Windows/Fonts/arial.ttf",
+           "/Library/Fonts/Arial.ttf"):
+    if os.path.exists(_p):
+        for _v in ("", "bd", "i"):
+            _f = _p.replace("arial.ttf", "arial%s.ttf" % _v) if _v else _p
+            if os.path.exists(_f):
+                fm.fontManager.addfont(_f)
+        plt.rcParams["font.family"] = fm.FontProperties(fname=_p).get_name()
+        break
+else:
+    print("  note: Arial not found, using %s" % plt.rcParams["font.family"][0])
 plt.rcParams["axes.unicode_minus"] = True
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -33,7 +50,7 @@ def save(fig, name):
     fig.savefig(p, dpi=300, bbox_inches="tight"); plt.close(fig); print(p)
 
 # ===== Fig3 — Experiment 1: throughput =====
-fig, axes = plt.subplots(1, 2, figsize=(10, 4.0))
+fig, axes = plt.subplots(1, 2, figsize=(7.5, 3.4))
 for ax, m in zip(axes, MS):
     e = D["exp1"][m]
     vals = [(n, e[n]["mean"], c) for n, c in SYS if e.get(n)]
@@ -49,7 +66,7 @@ axes[0].set_ylabel("Throughput (tokens/s)")
 save(fig, "Fig3.png")
 
 # ===== Fig4 — Experiment 2: absolute prefill / decode latency =====
-fig, axes = plt.subplots(1, 2, figsize=(10, 4.0))
+fig, axes = plt.subplots(1, 2, figsize=(7.5, 3.4))
 x = np.arange(2); w = .34
 for ax, key, ylab, ttl in (
         (axes[0], "prefill", "Prefill latency (s)", "(a) Prefill"),
@@ -94,7 +111,7 @@ save(fig, "Fig7.png")
 # ===== Fig6 — Experiment 4: throughput vs VRAM budget =====
 GB = [8, 16, 24, 32, 40]
 MK = {"Fiddler": "o", "Fiddlestick": "o", "DAOP": "s", "vLLM": "^"}
-fig, axes = plt.subplots(1, 2, figsize=(10, 4.0))
+fig, axes = plt.subplots(1, 2, figsize=(7.5, 3.4))
 for ax, m in zip(axes, MS):
     for n, c in SYS:
         xs, ys = [], []
@@ -146,7 +163,7 @@ for j, (n, c) in enumerate((("Fiddlestick", "#4c72b0"), ("Fiddler", "#8c8c8c")))
     ax.bar(x + (j - 0.5) * w, h, w, color=c, label=n)
     for i, (v, cc, nn) in enumerate(zip(h, cv, ne)):
         ax.text(i + (j - 0.5) * w, v + .006, f"{v:.3f}", ha="center", fontsize=8)
-        ax.text(i + (j - 0.5) * w, .006, f"{nn}", ha="center", fontsize=7, color="white")
+        ax.text(i + (j - 0.5) * w, .006, f"{nn}", ha="center", fontsize=8, color="white")
         ax.hlines(cc, i + (j - 0.5) * w - w/2, i + (j - 0.5) * w + w/2,
                   color="#111", ls=":", lw=1.3)
 ax.plot([], [], ls=":", color="#111", lw=1.3, label="Coverage (random-placement baseline)")
@@ -158,7 +175,7 @@ save(fig, "Fig8.png")
 # ===== Fig9 — held-out validation: hit rate, per model =====
 SYS9 = (("Fiddlestick", "#4c72b0"), ("Fiddler", "#8c8c8c"))
 KEY = {n: n for n, _ in SYS9}
-fig, axes = plt.subplots(1, 2, figsize=(10, 4.2))
+fig, axes = plt.subplots(1, 2, figsize=(7.5, 3.6))
 for ax, m, tag in zip(axes, MS, "ab"):
     x = np.arange(len(SYS9)); w = .34
     sg = [HT[m]["ShareGPT"][KEY[n]]["hit"] for n, _ in SYS9]
