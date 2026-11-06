@@ -101,16 +101,14 @@ for ax, m in zip(axes, MS):
             e = D["exp4"].get(f"{m}|{gb}", {}).get(n)
             if e: xs.append(gb); ys.append(e["mean"])
         if xs: ax.plot(xs, ys, MK[n] + "-", ms=5.5, lw=1.9, color=c, label=n)
-    # A line starting at 16 GB means the system could not run below that budget;
-# say so in one note rather than shading the region.
-    notes = []
-    for gb in GB:
-        e = D["exp4"].get(f"{m}|{gb}", {})
-        if not e.get("Fiddlestick"):
-            continue
-        missing = [n for n, _ in SYS if n != "Fiddlestick" and not e.get(n)]
-        if missing:
-            notes.append(f"{', '.join(missing)}: out of memory at {gb} GB")
+    # A line that starts at 16 GB means that system has no usable point below it.
+    # The three systems get there differently, so say what was observed for each
+    # rather than calling every absent point an out-of-memory failure:
+    #   Fiddler caps the process and ends in CUDA out of memory at 8 GB;
+    #   DAOP does not cap it, and runs while occupying 12.9 GiB, 1.6x the budget.
+    NOTE = {("c22", 8): ["Fiddler: out of memory",
+                         "DAOP: runs but occupies 12.9 GiB, 1.6x the budget"]}
+    notes = NOTE.get((m, 8), []) if not D["exp4"].get(f"{m}|8", {}).get("Fiddler") else []
     if notes:
         ax.text(.03, .97, "\n".join(notes), transform=ax.transAxes,
                 va="top", ha="left", fontsize=8, color="#c44e52")

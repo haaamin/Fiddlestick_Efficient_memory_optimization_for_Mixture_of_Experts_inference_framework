@@ -12,6 +12,7 @@ D = os.path.join(ROOT, "data")
 MODELS = ("x7b", "c22")
 N_EXPERT = {"x7b": 256, "c22": 448}
 BUDGETS = (8, 16, 24, 32, 40)
+CELLS = ["%dx%d" % (i, o) for i in (16, 32, 64) for o in (2, 4, 8, 16)]
 OURS = {                      # per model: the 16 GB run, the held-out run, the beam sweep
     "x7b": {"sharegpt": "final_b1_n10", "c4": "c4_b1_n10", "beam": "v4_beam_x7b"},
     "c22": {"sharegpt": "v3_c22_16GB",  "c4": "c4_c22",    "beam": "v4_beam_c22"},
@@ -137,8 +138,22 @@ def main():
                 if v:
                     e[k] = v
             v = _daop_log("%s/daop/daop_orig/%s_%dGB.log" % (D, m, g))
+            # A budget point counts only if the run covered the whole workload and
+            # stayed inside the budget it was given. DAOP's proportion_gpu sizes
+            # the expert cache rather than capping the process, so it can run well
+            # above the declared budget; such a point does not belong on an axis
+            # that reads as "throughput at this budget".
             if v and v.get("cells"):
-                e["DAOP"] = v
+                if len(v["cells"]) < len(CELLS):
+                    # Incomplete run. The 8 GB point on 8x22B is the one case:
+                    # DAOP starts there with no expert cached and 13221 MiB
+                    # resident, 1.6x the budget, and the run hit its time limit
+                    # after 10 cells. The log is kept as evidence of that
+                    # behaviour; its throughput is not a budget data point.
+                    print("  skip DAOP %s %dGB: %d of %d cells"
+                          % (m, g, len(v["cells"]), len(CELLS)))
+                else:
+                    e["DAOP"] = v
             v = _vllm("%s/vllm/budget/%s_%dGB.jsonl" % (D, m, g))
             if v:
                 e["vLLM"] = v
