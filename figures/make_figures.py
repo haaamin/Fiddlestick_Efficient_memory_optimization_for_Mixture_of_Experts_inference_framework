@@ -74,7 +74,8 @@ for ax, key, ylab, ttl in (
     ax.legend(fontsize=9, loc="upper left", framealpha=.95)
 save(fig, "Fig4.png")
 
-# ===== Fig5 — Experiment 3: measured minimum GPU residency =====
+# ===== Fig7 — measured minimum GPU residency =====
+# 번호는 원고에서 그림이 나오는 순서를 따른다. 메모리 그림은 7번째로 등장한다.
 fig, ax = plt.subplots(figsize=(7.2, 4.0))
 x = np.arange(2); w = .19
 RSYS = [(n, c) for n, c in SYS if n in RESID["x7b"]]
@@ -88,7 +89,7 @@ for j, (n, c) in enumerate(RSYS):
 ax.set_xticks(x); ax.set_xticklabels([MN[m] for m in MS], fontsize=10)
 ax.set_ylabel("Minimum GPU residency (GiB)"); ax.set_ylim(0, 15.5)
 ax.legend(fontsize=9); ax.grid(axis="y", alpha=.3); ax.set_axisbelow(True)
-save(fig, "Fig5.png")
+save(fig, "Fig7.png")
 
 # ===== Fig6 — Experiment 4: throughput vs VRAM budget =====
 GB = [8, 16, 24, 32, 40]
@@ -118,7 +119,7 @@ for ax, m in zip(axes, MS):
 axes[0].set_ylabel("Throughput (tokens/s)")
 save(fig, "Fig6.png")
 
-# ===== Fig7 — beam width =====
+# ===== Fig5 — beam width =====
 fig, ax = plt.subplots(figsize=(6.4, 4.2))
 BE = [1, 2, 4, 8]
 for m, c, mk, dy in (("x7b", "#4c72b0", "o", -15), ("c22", "#dd8452", "s", 11)):
@@ -136,7 +137,7 @@ ax.axhline(0, color="k", lw=1)
 ax.set_xscale("log", base=2); ax.set_xticks(BE); ax.set_xticklabels(BE)
 ax.set_xlabel("Beam width"); ax.set_ylabel("Throughput gain over Fiddler (%)")
 ax.set_ylim(0, 30); ax.set_xlim(0.88, 9.6); ax.grid(alpha=.3); ax.set_axisbelow(True); ax.legend(fontsize=10, loc="lower right")
-save(fig, "Fig7.png")
+save(fig, "Fig5.png")
 
 # ===== Fig8 — cache hit rate (immediately before held-out) =====
 fig, ax = plt.subplots(figsize=(7.2, 4.2))
