@@ -152,6 +152,17 @@ def main():
                     # interrupted rerun cannot quietly change a figure.
                     print("  skip DAOP %s %dGB: %d of %d cells"
                           % (m, g, len(v["cells"]), len(CELLS)))
+                elif (v.get("cuda") or v.get("peak") or 0) > 1.10 * g * 1024:
+                    # DAOP sizes its cache from proportion_gpu but does not cap
+                    # the process, so a point can be produced without the system
+                    # ever operating under the budget the axis names. At 8 GB on
+                    # 8x22B it caches no expert at all and still holds 13221 MiB,
+                    # 1.6x what was declared; that is not throughput at 8 GB.
+                    # The 10% allowance keeps points that only exceed the budget
+                    # by the CUDA context, which cudaMemGetInfo also counts.
+                    print("  skip DAOP %s %dGB: %d MiB, %.2fx the declared budget"
+                          % (m, g, v.get("cuda") or v.get("peak"),
+                             (v.get("cuda") or v.get("peak")) / (g * 1024.0)))
                 else:
                     e["DAOP"] = v
             v = _vllm("%s/vllm/budget/%s_%dGB.jsonl" % (D, m, g))

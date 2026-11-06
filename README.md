@@ -60,8 +60,13 @@ Fiddlestick stays inside the budget at 6912 MiB with 9 experts cached.
 The first pass of that DAOP run recorded ten of the twelve cells and then
 stopped; the log gives no reason and the remaining two were measured on
 2026-11-06 under the same settings and appended, so the file now carries all
-twelve. Fig 6 therefore has a DAOP point at 8 GB and no Fiddler point, and the
-caption says what each outcome was.
+twelve. Its throughput is still absent from Fig 6: `build_data.py` drops a
+budget point whose occupancy exceeds the declared budget by more than 10%,
+because a system that never ran inside the budget has no throughput to place
+on that axis. The 10% allowance keeps the points that are over only by the
+CUDA context, which `cudaMemGetInfo` also counts. The value is reported in the
+text instead. Fig 6 therefore has no Fiddler and no DAOP point at 8 GB on
+Mixtral-8x22B, for the two different reasons above.
 
 ## Why DAOP is absent from Fig 8 and Fig 9
 
